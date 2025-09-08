@@ -11,11 +11,14 @@ import { Repository } from 'typeorm';
 import { GroupService } from 'src/group/group.service';
 import { handleError, succesMessage } from 'src/helpers/response';
 import { NotFoundError, throwError } from 'rxjs';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class TeacherService {
   constructor(
     @InjectRepository(Teacher) private teacherRepo: Repository<Teacher>,
+    @InjectRedis() private readonly redis: Redis,
     private groupService: GroupService,
   ) {}
   async create(createTeacherDto: CreateTeacherDto) {
@@ -34,10 +37,9 @@ export class TeacherService {
         throw new NotFoundException('Group not found');
       }
 
-      // Yangi teacher obyektini yaratamiz va group ni qo‘shamiz
       const newTeacher = this.teacherRepo.create({
         ...createTeacherDto,
-        group: group.data, // 👈 bu yer muhim!
+        group: group.data,
       });
 
       await this.teacherRepo.save(newTeacher);
@@ -50,9 +52,14 @@ export class TeacherService {
 
   async findAll() {
     try {
+      const redisTeacher = JSON.parse(await this.redis.get('teachers')||'null')
+      if(redisTeacher!==null){
+        return succesMessage(redisTeacher)
+      }
       const teachers = await this.teacherRepo.find({
         relations: ['group'],
       });
+      await this.redis.set('teachers',JSON.stringify(teachers))
       return succesMessage(teachers);
     } catch (error) {
       handleError(error);

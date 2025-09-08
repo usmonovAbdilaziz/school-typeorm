@@ -10,12 +10,14 @@ import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { GroupService } from 'src/group/group.service';
 import { handleError, succesMessage } from 'src/helpers/response';
-import { NotFoundError } from 'rxjs';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class StudentsService {
   constructor(
     @InjectRepository(Student) private studentRepo: Repository<Student>,
+    @InjectRedis() private readonly redis: Redis,
     private groupServise: GroupService,
   ) {}
   async create(createStudentDto: CreateStudentDto) {
@@ -50,7 +52,12 @@ export class StudentsService {
 
   async findAll() {
     try {
+      const redisStudents =JSON.parse(await this.redis.get('students')||'null')
+      if(redisStudents!==null){
+        return succesMessage(redisStudents)
+      }
       const students = await this.studentRepo.find({ relations: ['group'] });
+      await this.redis.set('students',JSON.stringify(students))
       return succesMessage(students);
     } catch (error) {
       handleError(error);

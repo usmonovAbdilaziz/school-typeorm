@@ -1,0 +1,46 @@
+version: '3.9'  # Docker Compose versiyasi
+
+services: # xizmatlar ro'yxati
+
+  postgres: # PostgreSQL server
+    image: postgres:14  # Rasm (image) versiyasi
+    container_name: learning_center  # konteyner nomi
+    restart: always  # server to'xtasa, qayta ishga tushurilsin
+    environment:
+      POSTGRES_USER: nestuser  # foydalanuvchi nomi
+      POSTGRES_PASSWORD: nestpass  # parol
+      POSTGRES_DB: nestdb  # bazaning nomi
+    ports:
+      - "5432:5432"  # mahalliy port : konteyner porti
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # doimiy ma'lumotlar saqlanishi uchun
+
+  redis:  # Redis cache server
+    image: redis:6.2
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "6379:6379"  # redis porti
+
+  app:  # NestJS dasturimiz
+    build: .  # joriy papkada joylashgan Dockerfile orqali build qilinadi
+    container_name: nest_app
+    ports:
+      - "3000:3000"  # tashqi port: ichki port
+    depends_on:
+      - postgres  # bu xizmatlar ishga tushmaguncha kutadi
+      - redis
+    environment:  # muhit o'zgaruvchilari
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: nestuser
+      DATABASE_PASSWORD: nestpass
+      DATABASE_NAME: nestdb
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    volumes:
+      - .:/usr/src/app  # joriy papkani konteyner ichiga bog‘laydi
+    command: npm run start:dev  # NestJS dev serverni ishga tushuradi
+
+volumes:
+  pgdata:  # PostgreSQL uchun hajm (volume)

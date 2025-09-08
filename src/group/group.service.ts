@@ -9,10 +9,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Group } from './entities/group.entity';
 import { Repository } from 'typeorm';
 import { handleError, succesMessage } from 'src/helpers/response';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class GroupService {
-  constructor(@InjectRepository(Group) private groupRepo: Repository<Group>) {}
+  constructor(
+    @InjectRepository(Group) private groupRepo: Repository<Group>,
+    @InjectRedis() private readonly redis: Redis,
+  ) {}
   async create(createGroupDto: CreateGroupDto) {
     try {
       const group1 = await this.groupRepo.findOne({
@@ -31,10 +36,15 @@ export class GroupService {
 
   async findAll() {
     try {
+      const redisGroup = await JSON.parse(await this.redis.get('groups')||'null')
+      if(redisGroup!==null){
+        return succesMessage(redisGroup)
+      }
       const groups = await this.groupRepo.find({
         order: { createdAt: 'ASC' },
         relations: ['teachers'],
       });
+      await this.redis.set('groups',JSON.stringify(groups))
       return succesMessage(groups);
     } catch (error) {
       handleError(error);
