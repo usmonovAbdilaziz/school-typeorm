@@ -1,0 +1,24 @@
+import { IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
+import { BuyerStatus, Currency } from "src/roles/roles";
+
+export class CreatePaymentDto {
+  @IsString()
+  @IsNotEmpty()
+  buyer_id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  provider: string;
+
+  @IsEnum(Currency)
+  @IsNotEmpty()
+  currency: Currency;
+
+  @IsObject()
+  @IsOptional()
+  metadata: object;
+
+  @IsEnum(BuyerStatus)
+  @IsOptional()
+  buyerStatus?: BuyerStatus;
+}
