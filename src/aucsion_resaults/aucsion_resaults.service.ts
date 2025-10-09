@@ -1,10 +1,10 @@
 import { CreateAucsionResaultDto } from './dto/create-aucsion_resault.dto';
 import { UpdateAucsionResaultDto } from './dto/update-aucsion_resault.dto';
-import { handleError, succesMessage } from 'src/helpers/response';
+import { handleError, succesMessage } from '../helpers/response';
 import { AucsionResault } from './entities/aucsion_resault.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { BuyerService } from 'src/buyer/buyer.service';
-import { LotsService } from 'src/lots/lots.service';
+import { BuyerService } from '../buyer/buyer.service';
+import { LotsService } from '../lots/lots.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -50,8 +50,7 @@ export class AucsionResaultsService {
         where: { id },
         relations: ['buyer', 'lot'],
       });
-      if (!result)
-        throw new NotFoundException(`Result not found`);
+      if (!result) throw new NotFoundException(`Result not found`);
       return succesMessage(result);
     } catch (error) {
       handleError(error);
@@ -79,7 +78,7 @@ export class AucsionResaultsService {
 
       await this.resultRepo.update(id, updateAucsionResaultDto);
       const updated = await this.findOne(id);
-      return updated
+      return updated;
     } catch (error) {
       handleError(error);
     }

@@ -1,12 +1,16 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateLotInterestedDto } from './dto/create-lot_interested.dto';
 import { UpdateLotInterestedDto } from './dto/update-lot_interested.dto';
-import { handleError, succesMessage } from 'src/helpers/response';
+import { handleError, succesMessage } from '../helpers/response';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LotInterested } from './entities/lot_interested.entity';
 import { Repository } from 'typeorm';
-import { LotsService } from 'src/lots/lots.service';
-import { BuyerService } from 'src/buyer/buyer.service';
+import { LotsService } from '../lots/lots.service';
+import { BuyerService } from '../buyer/buyer.service';
 
 @Injectable()
 export class LotInterestedService {
@@ -27,7 +31,8 @@ export class LotInterestedService {
       if (!buyer) {
         throw new NotFoundException('Buyer not found');
       }
-      if(await this.interesRepo.findOne({where:{lot_id,buyer_id}})) throw new ConflictException('Onse allow liked')
+      if (await this.interesRepo.findOne({ where: { lot_id, buyer_id } }))
+        throw new ConflictException('Onse allow liked');
       const interes = this.interesRepo.create(createLotInterestedDto);
       await this.interesRepo.save(interes);
       return succesMessage(interes, 201);
@@ -41,7 +46,7 @@ export class LotInterestedService {
       const inters = await this.interesRepo.find({
         relations: ['lot', 'buyer'],
       });
-      return succesMessage(inters)
+      return succesMessage(inters);
     } catch (error) {
       handleError(error);
     }
@@ -53,10 +58,10 @@ export class LotInterestedService {
         where: { id },
         relations: ['lot', 'buyer'],
       });
-      if(!interes){
-        throw new NotFoundException('Lot-interested not found')
+      if (!interes) {
+        throw new NotFoundException('Lot-interested not found');
       }
-      return succesMessage(interes)
+      return succesMessage(interes);
     } catch (error) {
       handleError(error);
     }
@@ -64,9 +69,9 @@ export class LotInterestedService {
 
   async update(id: string, updateLotInterestedDto: UpdateLotInterestedDto) {
     try {
-      await this.interesRepo.update(id,updateLotInterestedDto)
-      const lotInterst=await this.findOne(id)
-      return lotInterst
+      await this.interesRepo.update(id, updateLotInterestedDto);
+      const lotInterst = await this.findOne(id);
+      return lotInterst;
     } catch (error) {
       handleError(error);
     }
@@ -74,9 +79,9 @@ export class LotInterestedService {
 
   async remove(id: string) {
     try {
-      await this.findOne(id)
-      await this.interesRepo.delete(id)
-      return succesMessage({message:'Delete from ID'})
+      await this.findOne(id);
+      await this.interesRepo.delete(id);
+      return succesMessage({ message: 'Delete from ID' });
     } catch (error) {
       handleError(error);
     }

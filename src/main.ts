@@ -1,8 +1,10 @@
 import { HttpExceptionFilter } from './exeptions/http-filter.exeptions';
 import { ValidationPipe } from '@nestjs/common';
+import * as coockieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as express from 'express';
+import { resolve } from 'path';
 
 const PORT = process.env.PORT!;
 
@@ -16,10 +18,14 @@ async function bootstrap() {
     '/api/v1/payments/webhook',
     express.raw({ type: 'application/json' }),
   );
+  //get images
+  app.use('/uploads', express.static(resolve(__dirname, '..', 'uploads')));
   // 🔓 CORS (Cross-Origin Resource Sharing) ni yoqadi — frontend backendga har qanday domen orqali murojaat qilishi mumkin
   app.enableCors({
     origin: '*', // barcha domenlarga ruxsat
   });
+  //coocie bilan ishlash
+  app.use(coockieParser());
 
   // 📁 Barcha endpointlar uchun umumiy prefix — API versiyasini belgilaydi
   app.setGlobalPrefix('api/v1');

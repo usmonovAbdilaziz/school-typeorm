@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateBuyerDto } from './dto/create-buyer.dto';
 import { UpdateBuyerDto } from './dto/update-buyer.dto';
-import { handleError, succesMessage } from 'src/helpers/response';
+import { handleError, succesMessage } from '../helpers/response';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Buyer } from './entities/buyer.entity';
 import { Repository } from 'typeorm';
@@ -39,7 +39,7 @@ export class BuyerService {
   async findAll() {
     try {
       const buyers = await this.buyerRepo.find({
-        relations: ['interests', 'comments','results'],
+        relations: ['interests', 'comments', 'results'],
       });
       return succesMessage(buyers);
     } catch (error) {
@@ -51,7 +51,7 @@ export class BuyerService {
     try {
       const buyer = await this.buyerRepo.findOne({
         where: { id },
-        relations: ['interests', 'comments','results'],
+        relations: ['interests', 'comments', 'results'],
       });
       if (!buyer) {
         throw new NotFoundException('Buyer not found');
@@ -64,8 +64,14 @@ export class BuyerService {
 
   async update(id: string, updateBuyerDto: UpdateBuyerDto) {
     try {
-      const { password, newPassword, email, full_name, interested,buyerStatus } =
-        updateBuyerDto;
+      const {
+        password,
+        newPassword,
+        email,
+        full_name,
+        interested,
+        buyerStatus,
+      } = updateBuyerDto;
       await this.findOne(id);
       if (newPassword && !password) {
         throw new NotFoundException('Password notfound');
@@ -103,5 +109,8 @@ export class BuyerService {
     } catch (error) {
       handleError(error);
     }
+  }
+  async findByEmail(email: string) {
+    return this.buyerRepo.findOne({ where: { email } });
   }
 }

@@ -7,7 +7,9 @@ describe('LotInterestedService (light)', () => {
 
   beforeEach(async () => {
     await Test.createTestingModule({
-      providers: [{ provide: getRepositoryToken(LotInterested), useValue: mockRepo }],
+      providers: [
+        { provide: getRepositoryToken(LotInterested), useValue: mockRepo },
+      ],
     }).compile();
   });
 

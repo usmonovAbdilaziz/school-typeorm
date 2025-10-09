@@ -19,5 +19,3 @@ describe('BuyerService (light)', () => {
     expect(mockRepo.save).toHaveBeenCalled();
   });
 });
-
- 

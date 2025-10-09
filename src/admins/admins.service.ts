@@ -5,12 +5,11 @@ import {
 } from '@nestjs/common';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { handleError, succesMessage } from 'src/helpers/response';
+import { handleError, succesMessage } from '../helpers/response';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from './entities/admin.entity';
 import { Repository } from 'typeorm';
 import { Crypto } from '../helpers/hashed.pass';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class AdminsService {
@@ -116,5 +115,8 @@ export class AdminsService {
     } catch (error) {
       handleError(error);
     }
+  }
+  async findByEmail(email: string) {
+    return this.adminRepo.findOne({ where: { email } });
   }
 }

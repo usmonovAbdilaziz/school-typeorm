@@ -11,7 +11,9 @@ describe('AucsionResaultsController', () => {
       providers: [AucsionResaultsService],
     }).compile();
 
-    controller = module.get<AucsionResaultsController>(AucsionResaultsController);
+    controller = module.get<AucsionResaultsController>(
+      AucsionResaultsController,
+    );
   });
 
   it('should be defined', () => {

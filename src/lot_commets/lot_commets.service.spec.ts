@@ -6,7 +6,14 @@ import { BuyerService } from '../buyer/buyer.service';
 import { LotsService } from '../lots/lots.service';
 
 describe('LotCommetsService (light)', () => {
-  const mockRepo = { create: jest.fn(), save: jest.fn(), find: jest.fn(), findOneBy: jest.fn(), update: jest.fn(), delete: jest.fn() };
+  const mockRepo = {
+    create: jest.fn(),
+    save: jest.fn(),
+    find: jest.fn(),
+    findOneBy: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  };
   const mockBuyer = { findOne: jest.fn() };
   const mockLot = { findOne: jest.fn() };
 

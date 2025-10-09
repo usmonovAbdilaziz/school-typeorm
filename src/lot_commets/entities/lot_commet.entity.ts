@@ -1,6 +1,14 @@
-import { Buyer } from 'src/buyer/entities/buyer.entity';
-import { Lot } from 'src/lots/entities/lot.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Buyer } from '../../buyer/entities/buyer.entity';
+import { Lot } from '../../lots/entities/lot.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity('lot_comments')
 export class LotCommet {
@@ -10,10 +18,13 @@ export class LotCommet {
   @Column({ type: 'varchar', nullable: false })
   commet: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   buyer_id: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
+  buyer_name: string;
+
+  @Column({ type: 'varchar' })
   lot_id: string;
 
   @ManyToOne(() => Buyer, (buyer) => buyer.comments, {

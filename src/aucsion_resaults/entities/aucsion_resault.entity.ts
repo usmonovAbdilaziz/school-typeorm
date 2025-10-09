@@ -1,5 +1,5 @@
-import { Buyer } from 'src/buyer/entities/buyer.entity';
-import { Lot } from 'src/lots/entities/lot.entity';
+import { Buyer } from '../../buyer/entities/buyer.entity';
+import { Lot } from '../../lots/entities/lot.entity';
 import {
   Column,
   CreateDateColumn,

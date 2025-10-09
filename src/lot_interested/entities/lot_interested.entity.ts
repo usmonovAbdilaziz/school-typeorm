@@ -1,20 +1,26 @@
-import { Buyer } from 'src/buyer/entities/buyer.entity';
-import { Lot } from 'src/lots/entities/lot.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-
+import { Buyer } from '../../buyer/entities/buyer.entity';
+import { Lot } from '../../lots/entities/lot.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity('lot_interests')
 export class LotInterested {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({type:'varchar'})
+  @Column({ type: 'varchar' })
   buyer_id: string;
 
-  @Column({type:'varchar'})
+  @Column({ type: 'varchar' })
   lot_id: string;
 
-  @Column({type:'boolean',default:false})
+  @Column({ type: 'boolean', default: false })
   isChecked: boolean;
 
   @CreateDateColumn()

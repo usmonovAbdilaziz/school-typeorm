@@ -1,6 +1,16 @@
-import { Admin } from 'src/admins/entities/admin.entity';
-import { Lot } from 'src/lots/entities/lot.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Admin } from '../../admins/entities/admin.entity';
+import { Lot } from '../../lots/entities/lot.entity';
+import { LotStatus, SellerType } from '../../roles/roles';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity('sellers')
 export class Seller {
@@ -10,8 +20,20 @@ export class Seller {
   @Column({ nullable: true })
   admin_id: string;
 
-  @Column({ type:'varchar' })
+  @Column({ type: 'varchar' })
   starting_bit: string;
+
+  @Column({ type: 'varchar' })
+  description: string;
+
+  @Column({ type: 'varchar' })
+  tool_name: string;
+
+  @Column({ type: 'enum', enum: SellerType })
+  tool_type: SellerType;
+
+  @Column({ type: 'enum', enum: LotStatus, default: LotStatus.Pending })
+  status: LotStatus;
 
   @CreateDateColumn()
   created_at: Date;

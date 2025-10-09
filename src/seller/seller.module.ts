@@ -3,14 +3,20 @@ import { SellerService } from './seller.service';
 import { SellerController } from './seller.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Seller } from './entities/seller.entity';
-import { FileModule } from 'src/file/file.module';
-import { Crypto } from 'src/helpers/hashed.pass';
-import { AdminsModule } from 'src/admins/admins.module';
+import { FileModule } from '../file/file.module';
+import { Crypto } from '../helpers/hashed.pass';
+import { AdminsModule } from '../admins/admins.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Seller]), FileModule,AdminsModule],
+  imports: [
+    TypeOrmModule.forFeature([Seller]),
+    FileModule,
+    AdminsModule,
+    AuthModule,
+  ],
   controllers: [SellerController],
   providers: [SellerService, Crypto],
-  exports:[SellerService]
+  exports: [SellerService],
 })
 export class SellerModule {}

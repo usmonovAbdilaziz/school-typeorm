@@ -1,9 +1,16 @@
-import { AucsionResault } from 'src/aucsion_resaults/entities/aucsion_resault.entity';
-import { LotCommet } from 'src/lot_commets/entities/lot_commet.entity';
-import { LotInterested } from 'src/lot_interested/entities/lot_interested.entity';
-import { Payment } from 'src/payments/entities/payment.entity';
-import { BuyerStatus } from 'src/roles/roles';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { AucsionResault } from '../../aucsion_resaults/entities/aucsion_resault.entity';
+import { Card } from '../../cards/entities/card.entity';
+import { LotCommet } from '../../lot_commets/entities/lot_commet.entity';
+import { LotInterested } from '../../lot_interested/entities/lot_interested.entity';
+import { BuyerStatus } from '../../roles/roles';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity('buyers')
 export class Buyer {
@@ -36,6 +43,9 @@ export class Buyer {
 
   @OneToMany(() => AucsionResault, (result) => result.buyer)
   results: AucsionResault[];
+
+  @OneToMany(() => Card, (result) => result.buyer)
+  cards: Card[];
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -1,12 +1,6 @@
 import { Type } from 'class-transformer';
-import {
-  IsDate,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { LotStatus } from 'src/roles/roles';
+import { IsDate, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { LotStatus } from '../../roles/roles';
 
 export class CreateLotDto {
   @IsString()
@@ -23,6 +17,6 @@ export class CreateLotDto {
   address: string;
 
   @IsEnum(LotStatus)
-  @IsOptional()
-  status?: LotStatus;
+  @IsNotEmpty()
+  seller_status: LotStatus;
 }

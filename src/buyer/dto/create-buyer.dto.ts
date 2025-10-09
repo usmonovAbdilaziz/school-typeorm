@@ -1,11 +1,11 @@
 import {
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
+  MinLength,
 } from 'class-validator';
-import { BuyerStatus, SellerType } from 'src/roles/roles';
+import { BuyerStatus, SellerType } from '../../roles/roles';
 
 export class CreateBuyerDto {
   @IsString()
@@ -17,7 +17,7 @@ export class CreateBuyerDto {
   email: string;
 
   @IsString()
-  @IsNotEmpty()
+  @MinLength(6, { message: 'Parol kamida 6 ta belgidan iborat bo‘lishi kerak' })
   password: string;
 
   @IsString()

@@ -1,9 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { LotCommetsService } from './lot_commets.service';
 import { CreateLotCommetDto } from './dto/create-lot_commet.dto';
 import { UpdateLotCommetDto } from './dto/update-lot_commet.dto';
+import { AuthGuard } from '../guard/auth-guard';
+import { BuyerGuard } from '../guard/buyer-guard';
 
 @Controller('lot-commets')
+@UseGuards(AuthGuard, BuyerGuard)
 export class LotCommetsController {
   constructor(private readonly lotCommetsService: LotCommetsService) {}
 
@@ -23,7 +35,10 @@ export class LotCommetsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLotCommetDto: UpdateLotCommetDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateLotCommetDto: UpdateLotCommetDto,
+  ) {
     return this.lotCommetsService.update(id, updateLotCommetDto);
   }
 

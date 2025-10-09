@@ -8,13 +8,17 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  UseGuards,
 } from '@nestjs/common';
 import { SellerService } from './seller.service';
 import { CreateSellerDto } from './dto/create-seller.dto';
 import { UpdateSellerDto } from './dto/update-seller.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '../guard/auth-guard';
+import { RolesGuard } from '../guard/roles-guard';
 
 @Controller('seller')
+@UseGuards(AuthGuard, RolesGuard)
 export class SellerController {
   constructor(private readonly sellerService: SellerService) {}
 
@@ -24,7 +28,6 @@ export class SellerController {
     @Body() createSellerDto: CreateSellerDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    
     return this.sellerService.create(createSellerDto, files);
   }
 

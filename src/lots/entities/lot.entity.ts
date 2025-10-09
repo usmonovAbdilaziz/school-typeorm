@@ -11,19 +11,21 @@ import {
 import { Seller } from '../../seller/entities/seller.entity';
 import { LotCommet } from '../../lot_commets/entities/lot_commet.entity';
 import { LotInterested } from '../../lot_interested/entities/lot_interested.entity';
-import { LotStatus } from 'src/roles/roles';
-import { AucsionResault } from 'src/aucsion_resaults/entities/aucsion_resault.entity';
+import { AucsionResault } from '../../aucsion_resaults/entities/aucsion_resault.entity';
 
 @Entity('lots')
 export class Lot {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'text', nullable: true })
-  description?: string;
+  @Column({ type: 'text' })
+  description: string;
 
-  @Column({ type: 'enum', enum: LotStatus, default: LotStatus.Pending })
-  status: LotStatus;
+  @Column({ type: 'varchar' })
+  address: string;
+
+  @Column({ type: 'date' })
+  start_time: Date;
 
   @OneToMany(() => LotCommet, (comment) => comment.lot)
   comments: LotCommet[];

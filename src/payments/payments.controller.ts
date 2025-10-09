@@ -1,9 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Req, Headers, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  HttpCode,
+  Req,
+  Headers,
+  BadRequestException,
+  UseGuards,
+} from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { AuthGuard } from '../guard/auth-guard';
+import { BuyerGuard } from '../guard/buyer-guard';
 
 @Controller('payments')
+@UseGuards(AuthGuard, BuyerGuard)
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 

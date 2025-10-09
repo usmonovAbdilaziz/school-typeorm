@@ -1,0 +1,133 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Crypto } from '../helpers/hashed.pass';
+import { Token } from '../helpers/token';
+import { CreateAuthDto } from './dto/create-auth.dto';
+import { AdminsService } from '../admins/admins.service';
+import { BuyerService } from '../buyer/buyer.service';
+import { Request, Response } from 'express';
+import { handleError, succesMessage } from '../helpers/response';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private readonly adminService: AdminsService,
+    private readonly buyerService: BuyerService,
+    private readonly tokenService: Token,
+    private readonly crypto: Crypto,
+  ) {}
+
+  // Register function
+  async login(createAuthDto: CreateAuthDto, res: Response) {
+    try {
+      const { password, email } = createAuthDto;
+      const admin = await this.adminService.findByEmail(email);
+      const buyer = await this.buyerService.findByEmail(email);
+      if (admin) {
+        const pass = await this.crypto.decrypt(password, admin.password);
+        if (!pass) {
+          throw new NotFoundException('Invalid password');
+        }
+        const payload = {
+          adminId: admin.id,
+          name: admin.full_name,
+          role: 'admin',
+        };
+        const accessToken = await this.tokenService.generateAccesToken(payload);
+        const refreshToken =
+          await this.tokenService.generateRefreshToken(payload);
+        res.cookie('AdminRefreshToken', refreshToken, { httpOnly: true });
+        return succesMessage({ token: accessToken }, 200);
+      }
+      if (buyer) {
+        const pass = await this.crypto.decrypt(password, buyer.password);
+        if (!pass) {
+          throw new NotFoundException('Invalid password');
+        }
+        const payload = {
+          buyerId: buyer.id,
+          name: buyer.full_name,
+          status: buyer.buyerStatus,
+          role: 'buyer',
+        };
+        const accessToken = await this.tokenService.generateAccesToken(payload);
+        const refreshToken =
+          await this.tokenService.generateRefreshToken(payload);
+        res.cookie('BuyerRefreshToken', refreshToken, {
+          httpOnly: true,
+          secure: true,
+        });
+        return succesMessage({ token: accessToken }, 200);
+      }
+      return succesMessage({ message: 'ruxsat etilmagan foydalanuvchi' });
+    } catch (error) {
+      handleError(error);
+    }
+  }
+  async refresh(res: Response, req: Request) {
+    try {
+      const role = req.query.role;
+
+      if (role === 'adminToken') {
+        const oldToken = req.cookies['AdminRefreshToken'];
+        if (!oldToken) {
+          throw new NotFoundException('Admin refresh token topilmadi');
+        }
+
+        const payload = await this.tokenService.verifyToken(
+          oldToken,
+          process.env.JWT_REFRESH_KEY as string,
+        );
+
+        // ❌ JWT metadata’ni olib tashlash
+        const { exp, iat, ...cleanPayload } = payload;
+
+        // ✅ Yangi access token yaratish
+        const newAccessToken =
+          await this.tokenService.generateAccesToken(cleanPayload);
+
+        return succesMessage({ token: newAccessToken }, 200);
+      }
+
+      if (role === 'buyerToken') {
+        const oldToken = req.cookies['BuyerRefreshToken'];
+        if (!oldToken) {
+          throw new NotFoundException('Buyer refresh token topilmadi');
+        }
+
+        const payload = await this.tokenService.verifyToken(
+          oldToken,
+          process.env.JWT_REFRESH_KEY as string,
+        );
+
+        const { exp, iat, ...cleanPayload } = payload;
+
+        const newAccessToken =
+          await this.tokenService.generateAccesToken(cleanPayload);
+
+        return succesMessage({ token: newAccessToken }, 200);
+      }
+
+      return succesMessage({ message: 'Token turi aniqlanmadi' }, 400);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+  async logout(res:Response,role:string){
+    try {
+      if (role === 'adminToken') {
+        res.clearCookie('AdminRefreshToken');
+        return succesMessage({ message: 'Admin logout muvaffaqiyatli' }, 200);
+      }
+
+      if (role === 'buyerToken') {
+        res.clearCookie('BuyerRefreshToken');
+        return succesMessage({ message: 'Buyer logout muvaffaqiyatli' }, 200);
+      }
+
+      return succesMessage({ message: 'Token turi aniqlanmadi' }, 400);
+
+    } catch (error) {
+      handleError(error)
+    }
+  }
+}

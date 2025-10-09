@@ -1,5 +1,11 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { SellerType } from 'src/roles/roles';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { LotStatus, SellerType } from '../../roles/roles';
 
 export class CreateSellerDto {
   @IsString()
@@ -17,6 +23,10 @@ export class CreateSellerDto {
   @IsEnum(SellerType)
   @IsNotEmpty()
   tool_type: SellerType;
+
+  @IsEnum(LotStatus)
+  @IsOptional()
+  status?: LotStatus;
 
   @IsString()
   @IsNotEmpty()

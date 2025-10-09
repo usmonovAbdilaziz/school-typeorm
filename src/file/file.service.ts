@@ -33,7 +33,6 @@ export class FileService {
   }
 
   async createFiles(files: Express.Multer.File[]): Promise<string[]> {
-    
     if (!files || files.length === 0) {
       throw new BadRequestException('No files uploaded');
     }

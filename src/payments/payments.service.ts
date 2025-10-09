@@ -9,10 +9,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from './entities/payment.entity';
 import { Repository } from 'typeorm';
 import Stripe from 'stripe';
-import { BuyerService } from 'src/buyer/buyer.service';
-import { handleError, succesMessage } from 'src/helpers/response';
-import { SellerService } from 'src/seller/seller.service';
-import { BuyerStatus } from 'src/roles/roles';
+import { BuyerService } from '../buyer/buyer.service';
+import { handleError, succesMessage } from '../helpers/response';
+import { SellerService } from '../seller/seller.service';
+import { BuyerStatus } from '../roles/roles';
 
 @Injectable()
 export class PaymentsService {
@@ -93,15 +93,15 @@ export class PaymentsService {
         const payment = await this.paymentRepo.findOne({
           where: { providerTransactionId: transactionId },
         });
-        
+
         if (!payment) {
           console.warn(
             `Payment with transaction ID ${transactionId} not found`,
           );
           return { received: true, warning: 'Payment not found' };
         }
-        
-console.log(event.type);
+
+        console.log(event.type);
 
         // 🎯 SUCCESS bo‘lsa — Paid, else — Cancelled
         if (event.type === 'payment_intent.succeeded') {
@@ -124,7 +124,6 @@ console.log(event.type);
             buyerStatus: BuyerStatus.Cancelled,
           });
         }
-        
 
         return { received: true, eventType: event.type };
       }
@@ -137,7 +136,7 @@ console.log(event.type);
 
   async findAll() {
     try {
-      const payments = await this.paymentRepo.find({relations:['buyer']});
+      const payments = await this.paymentRepo.find({ relations: ['buyer'] });
       return succesMessage(payments);
     } catch (error) {
       handleError(error);

@@ -1,5 +1,11 @@
-import { IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
-import { BuyerStatus, Currency } from "src/roles/roles";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { BuyerStatus, Currency } from '../../roles/roles';
 
 export class CreatePaymentDto {
   @IsString()

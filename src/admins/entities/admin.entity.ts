@@ -1,4 +1,4 @@
-import { Seller } from 'src/seller/entities/seller.entity';
+import { Seller } from '../../seller/entities/seller.entity';
 import {
   Column,
   CreateDateColumn,
@@ -24,7 +24,7 @@ export class Admin {
 
   @OneToMany(() => Seller, (seller) => seller.admin)
   sellers: Seller[];
-  
+
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 

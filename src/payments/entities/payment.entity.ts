@@ -1,6 +1,13 @@
-import { Buyer } from 'src/buyer/entities/buyer.entity';
-import { BuyerStatus, Currency } from 'src/roles/roles';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Buyer } from '../../buyer/entities/buyer.entity';
+import { BuyerStatus, Currency } from '../../roles/roles';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('payments')
 export class Payment {
