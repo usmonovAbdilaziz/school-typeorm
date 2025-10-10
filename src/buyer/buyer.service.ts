@@ -28,6 +28,7 @@ export class BuyerService {
       const newBuyer = this.buyerRepo.create({
         ...createBuyerDto,
         password: hashPass,
+        buyerPass:password
       });
       await this.buyerRepo.save(newBuyer);
       return succesMessage(newBuyer, 201);
@@ -39,7 +40,7 @@ export class BuyerService {
   async findAll() {
     try {
       const buyers = await this.buyerRepo.find({
-        relations: ['interests', 'comments', 'results'],
+        relations: ['interests', 'comments', 'results', 'payment', 'cards'],
       });
       return succesMessage(buyers);
     } catch (error) {
@@ -51,7 +52,7 @@ export class BuyerService {
     try {
       const buyer = await this.buyerRepo.findOne({
         where: { id },
-        relations: ['interests', 'comments', 'results'],
+        relations: ['interests', 'comments', 'results', 'payment','cards'],
       });
       if (!buyer) {
         throw new NotFoundException('Buyer not found');

@@ -19,11 +19,10 @@ export class BuyerController {
   constructor(private readonly buyerService: BuyerService) {}
 
   @Post()
-  @UseGuards(AuthGuard, BuyerGuard)
   create(@Body() createBuyerDto: CreateBuyerDto) {
     return this.buyerService.create(createBuyerDto);
   }
-
+  
   @Get()
   @UseGuards(AuthGuard, BuyerGuard)
   findAll() {

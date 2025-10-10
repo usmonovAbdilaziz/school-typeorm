@@ -1,3 +1,4 @@
+import { Payment } from 'src/payments/entities/payment.entity';
 import { AucsionResault } from '../../aucsion_resaults/entities/aucsion_resault.entity';
 import { Card } from '../../cards/entities/card.entity';
 import { LotCommet } from '../../lot_commets/entities/lot_commet.entity';
@@ -23,6 +24,9 @@ export class Buyer {
   @Column({ type: 'varchar' })
   password: string;
 
+  @Column({ type: 'varchar' })
+  buyerPass: string;
+
   @Column({ length: 180, unique: true })
   email: string;
 
@@ -46,6 +50,9 @@ export class Buyer {
 
   @OneToMany(() => Card, (result) => result.buyer)
   cards: Card[];
+
+  @OneToMany(() => Payment, (result) => result.buyer)
+  payment: Payment;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -104,7 +104,10 @@ export class PaymentsService {
         console.log(event.type);
 
         // 🎯 SUCCESS bo‘lsa — Paid, else — Cancelled
-        if (event.type === 'payment_intent.succeeded') {
+        if (
+          event.type === 'payment_intent.succeeded' ||
+          event.type === 'payment_intent.created'
+        ) {
           // Payment statusini yangilaymiz
           await this.paymentRepo.update(payment.id, {
             buyerStatus: BuyerStatus.Paid,

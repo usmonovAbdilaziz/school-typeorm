@@ -17,11 +17,11 @@ import { AuthGuard } from '../guard/auth-guard';
 import { BuyerGuard } from '../guard/buyer-guard';
 
 @Controller('payments')
-@UseGuards(AuthGuard, BuyerGuard)
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post()
+  @UseGuards(AuthGuard, BuyerGuard)
   create(@Body() createPaymentDto: CreatePaymentDto) {
     return this.paymentsService.create(createPaymentDto);
   }
@@ -46,11 +46,13 @@ export class PaymentsController {
   }
 
   @Get()
+  @UseGuards(AuthGuard, BuyerGuard)
   findAll() {
     return this.paymentsService.findAll();
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, BuyerGuard)
   remove(@Param('id') id: string) {
     return this.paymentsService.remove(id);
   }

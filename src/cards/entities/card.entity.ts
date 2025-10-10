@@ -11,6 +11,9 @@ export class Card {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar'})
+  buyer_id: string;
+
   @Column({ type: 'varchar', length: 16 })
   card_number: string;
 
