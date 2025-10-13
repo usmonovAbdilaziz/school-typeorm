@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { BidHisory } from 'src/bit_history/entities/bit_history.entity';
 
 @Entity('buyers')
 export class Buyer {
@@ -50,6 +51,9 @@ export class Buyer {
 
   @OneToMany(() => Card, (result) => result.buyer)
   cards: Card[];
+
+  @OneToMany(() => BidHisory, (result) => result.buyer)
+  bids: BidHisory[];
 
   @OneToMany(() => Payment, (result) => result.buyer)
   payment: Payment;

@@ -1,12 +1,15 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { LotStatus } from '../../roles/roles';
+import {
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { LotStatus, SellerType } from '../../roles/roles';
 
 export class CreateLotDto {
-  @IsString()
-  @IsNotEmpty()
-  seller_id: string;
-
   @Type(() => Date)
   @IsDate()
   @IsNotEmpty()
@@ -16,7 +19,35 @@ export class CreateLotDto {
   @IsNotEmpty()
   address: string;
 
-  @IsEnum(LotStatus)
+  @IsBoolean()
+  @IsOptional()
+  isPlaying: boolean;
+
+  @IsString()
   @IsNotEmpty()
-  seller_status: LotStatus;
+  admin_id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  full_name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  tool_name: string;
+
+  @IsEnum(SellerType)
+  @IsNotEmpty()
+  tool_type: SellerType;
+
+  @IsEnum(LotStatus)
+  @IsOptional()
+  status: LotStatus;
+
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
+  @IsString()
+  @IsNotEmpty()
+  starting_bit: string;
 }

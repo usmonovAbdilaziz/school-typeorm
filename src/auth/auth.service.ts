@@ -27,27 +27,29 @@ export class AuthService {
         if (!pass) {
           throw new NotFoundException('Invalid password');
         }
+        const role='admin'
         const payload = {
           adminId: admin.id,
           name: admin.full_name,
-          role: 'admin',
+          role
         };
         const accessToken = await this.tokenService.generateAccesToken(payload);
         const refreshToken =
           await this.tokenService.generateRefreshToken(payload);
         res.cookie('AdminRefreshToken', refreshToken, { httpOnly: true });
-        return succesMessage({ token: accessToken }, 200);
+        return succesMessage({ token: accessToken,role }, 200);
       }
       if (buyer) {
         const pass = await this.crypto.decrypt(password, buyer.password);
         if (!pass) {
           throw new NotFoundException('Invalid password');
         }
+        const role= 'buyer';
         const payload = {
           buyerId: buyer.id,
           name: buyer.full_name,
           status: buyer.buyerStatus,
-          role: 'buyer',
+          role,
         };
         const accessToken = await this.tokenService.generateAccesToken(payload);
         const refreshToken =
@@ -56,7 +58,7 @@ export class AuthService {
           httpOnly: true,
           secure: true,
         });
-        return succesMessage({ token: accessToken }, 200);
+        return succesMessage({ token: accessToken,role }, 200);
       }
       return succesMessage({ message: 'ruxsat etilmagan foydalanuvchi' });
     } catch (error) {

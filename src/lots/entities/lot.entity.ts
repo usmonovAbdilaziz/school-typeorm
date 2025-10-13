@@ -12,6 +12,7 @@ import { Seller } from '../../seller/entities/seller.entity';
 import { LotCommet } from '../../lot_commets/entities/lot_commet.entity';
 import { LotInterested } from '../../lot_interested/entities/lot_interested.entity';
 import { AucsionResault } from '../../aucsion_resaults/entities/aucsion_resault.entity';
+import { Aucsion } from 'src/aucsion/entities/aucsion.entity';
 
 @Entity('lots')
 export class Lot {
@@ -24,6 +25,9 @@ export class Lot {
   @Column({ type: 'varchar' })
   address: string;
 
+  @Column({ type: 'boolean', default: true })
+  isPlaying: boolean;
+
   @Column({ type: 'date' })
   start_time: Date;
 
@@ -35,6 +39,9 @@ export class Lot {
 
   @OneToMany(() => LotInterested, (interest) => interest.lot)
   interests: LotInterested[];
+
+  @ManyToOne(() => Aucsion, (aucsion) => aucsion.lots)
+  aucsion: Aucsion;
 
   @CreateDateColumn()
   created_at: Date;

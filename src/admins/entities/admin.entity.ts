@@ -1,3 +1,4 @@
+import { Aucsion} from 'src/aucsion/entities/aucsion.entity';
 import { Seller } from '../../seller/entities/seller.entity';
 import {
   Column,
@@ -24,6 +25,9 @@ export class Admin {
 
   @OneToMany(() => Seller, (seller) => seller.admin)
   sellers: Seller[];
+
+  @OneToMany(() => Aucsion, (aucsion) => aucsion.admin)
+  aucsions: Aucsion[];
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
