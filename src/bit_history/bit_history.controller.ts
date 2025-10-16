@@ -8,7 +8,7 @@ export class BitHistoryController {
   constructor(private readonly bitHistoryService: BitHistoryService) {}
 
   @Post()
-  create(@Body() createBitHistoryDto: CreateBitHistoryDto) {
+  createdBit(@Body() createBitHistoryDto: CreateBitHistoryDto) {
     return this.bitHistoryService.create(createBitHistoryDto);
   }
 
@@ -23,7 +23,10 @@ export class BitHistoryController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBitHistoryDto: UpdateBitHistoryDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateBitHistoryDto: UpdateBitHistoryDto,
+  ) {
     return this.bitHistoryService.update(id, updateBitHistoryDto);
   }
 

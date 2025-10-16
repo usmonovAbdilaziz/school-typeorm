@@ -7,13 +7,15 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { LotsService } from './lots.service';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { UpdateLotDto } from './dto/update-lot.dto';
 import { AuthGuard } from '../guard/auth-guard';
-import { BuyerGuard } from '../guard/buyer-guard';
-import { RolesGuard } from 'src/guard/roles-guard';
+import { RolesGuard } from '../guard/roles-guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('lots')
 export class LotsController {
@@ -21,8 +23,12 @@ export class LotsController {
 
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
-  create(@Body() createLotDto: CreateLotDto) {
-    return this.lotsService.create(createLotDto);
+  @UseInterceptors(FilesInterceptor('files'))
+  create(
+    @Body() createLotDto: CreateLotDto,
+    @UploadedFiles() files?: Express.Multer.File[],
+  ) {
+    return this.lotsService.create(createLotDto, files);
   }
 
   @Get()
@@ -37,8 +43,13 @@ export class LotsController {
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  update(@Param('id') id: string, @Body() updateLotDto: UpdateLotDto) {
-    return this.lotsService.update(id, updateLotDto);
+  @UseInterceptors(FilesInterceptor('files'))
+  update(
+    @Param('id') id: string,
+    @Body() updateLotDto: UpdateLotDto,
+    @UploadedFiles() files?: Express.Multer.File[],
+  ) {
+    return this.lotsService.update(id, updateLotDto, files);
   }
 
   @Delete(':id')

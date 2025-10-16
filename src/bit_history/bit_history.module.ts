@@ -10,5 +10,6 @@ import { Module } from '@nestjs/common';
   imports:[TypeOrmModule.forFeature([BidHisory]),BuyerModule,AucsionModule],
   controllers: [BitHistoryController],
   providers: [BitHistoryService],
+  exports:[BitHistoryService]
 })
 export class BitHistoryModule {}

@@ -7,7 +7,7 @@ export class CreateBitHistoryDto {
 
   @IsString()
   @IsNotEmpty()
-  aucsionId: string;
+  auctionId: string;
 
   @IsNumber()
   @IsNotEmpty()

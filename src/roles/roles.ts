@@ -1,7 +1,6 @@
 export enum RoleUser {
   superadmin = 'superadmin',
   admin = 'admin',
-  user_seller = 'user-seller',
   user_buyer = 'user-buyer',
 }
 export enum SellerType {

@@ -20,12 +20,12 @@ export class BidHisory {
 
   @Column({ type: 'varchar' })
   buyerId: string;
-  
+
   @ManyToOne(() => Buyer, (buyer) => buyer.bids, { eager: true })
   buyer: Buyer;
 
   @Column({ type: 'varchar' })
-  aucsionId: string;
+  auctionId: string;
 
   @ManyToOne(() => Aucsion, (auction) => auction.bids)
   aucsion: Aucsion;

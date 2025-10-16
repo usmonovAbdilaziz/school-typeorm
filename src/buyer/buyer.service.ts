@@ -17,6 +17,7 @@ export class BuyerService {
     @InjectRepository(Buyer) private readonly buyerRepo: Repository<Buyer>,
     private readonly crypto: Crypto,
   ) {}
+
   async create(createBuyerDto: CreateBuyerDto) {
     try {
       const { password, email } = createBuyerDto;
@@ -28,7 +29,7 @@ export class BuyerService {
       const newBuyer = this.buyerRepo.create({
         ...createBuyerDto,
         password: hashPass,
-        buyerPass:password
+        buyerPass: password,
       });
       await this.buyerRepo.save(newBuyer);
       return succesMessage(newBuyer, 201);
@@ -40,7 +41,14 @@ export class BuyerService {
   async findAll() {
     try {
       const buyers = await this.buyerRepo.find({
-        relations: ['interests', 'comments', 'results', 'payment', 'cards'],
+        relations: [
+          'cards',
+          'interests',
+          'comments',
+          'results',
+          'payments',
+          'bids',
+        ],
       });
       return succesMessage(buyers);
     } catch (error) {
@@ -52,7 +60,14 @@ export class BuyerService {
     try {
       const buyer = await this.buyerRepo.findOne({
         where: { id },
-        relations: ['interests', 'comments', 'results', 'payment','cards'],
+        relations: [
+          'cards',
+          'interests',
+          'comments',
+          'results',
+          'payments',
+          'bids',
+        ],
       });
       if (!buyer) {
         throw new NotFoundException('Buyer not found');
@@ -65,17 +80,11 @@ export class BuyerService {
 
   async update(id: string, updateBuyerDto: UpdateBuyerDto) {
     try {
-      const {
-        password,
-        newPassword,
-        email,
-        full_name,
-        interested,
-        buyerStatus,
-      } = updateBuyerDto;
+      const { password, newPassword, email, full_name, buyerStatus } =
+        updateBuyerDto;
       await this.findOne(id);
       if (newPassword && !password) {
-        throw new NotFoundException('Password notfound');
+        throw new NotFoundException('Password not found');
       }
       let hashPass: string | undefined;
       if (password) {
@@ -111,6 +120,7 @@ export class BuyerService {
       handleError(error);
     }
   }
+
   async findByEmail(email: string) {
     return this.buyerRepo.findOne({ where: { email } });
   }

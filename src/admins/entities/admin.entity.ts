@@ -1,5 +1,5 @@
-import { Aucsion} from 'src/aucsion/entities/aucsion.entity';
-import { Seller } from '../../seller/entities/seller.entity';
+import { Aucsion } from '../../aucsion/entities/aucsion.entity';
+import { Lot } from '../../lots/entities/lot.entity';
 import {
   Column,
   CreateDateColumn,
@@ -23,8 +23,8 @@ export class Admin {
   @Column({ type: 'varchar' })
   password: string;
 
-  @OneToMany(() => Seller, (seller) => seller.admin)
-  sellers: Seller[];
+  @OneToMany(() => Lot, (lot) => lot.admin)
+  lots: Lot[];
 
   @OneToMany(() => Aucsion, (aucsion) => aucsion.admin)
   aucsions: Aucsion[];

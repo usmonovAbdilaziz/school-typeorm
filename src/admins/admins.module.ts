@@ -5,15 +5,9 @@ import { AdminsService } from './admins.service';
 import { Crypto } from '../helpers/hashed.pass';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Admin } from './entities/admin.entity';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Admin]),
-    AuthModule,
-    JwtModule,
-    forwardRef(() => AuthModule),
-  ],
+  imports: [TypeOrmModule.forFeature([Admin]), forwardRef(() => AuthModule)],
   controllers: [AdminsController],
   providers: [AdminsService, Crypto],
   exports: [Crypto, AdminsService],

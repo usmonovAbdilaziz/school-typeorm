@@ -9,33 +9,44 @@ import { handleError, succesMessage } from '../helpers/response';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lot } from './entities/lot.entity';
 import { Repository } from 'typeorm';
-import { SellerService } from '../seller/seller.service';
+import { AdminsService } from '../admins/admins.service';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class LotsService {
   constructor(
     @InjectRepository(Lot) private readonly lotsRepo: Repository<Lot>,
-    private readonly sellerService: SellerService,
+    private readonly adminService: AdminsService,
+    private readonly fileService: FileService,
   ) {}
-  async create(createLotDto: CreateLotDto) {
+
+  async create(createLotDto: CreateLotDto, files?: Express.Multer.File[]) {
     try {
-      const { seller_id, seller_status } = createLotDto;
+      const { admin_id, tool_name, tool_type } = createLotDto;
 
-      const seller = await this.sellerService.findOne(seller_id);
-      if (!seller) {
-        throw new NotFoundException('Seller not found');
-      }
+      // Check if admin exists
+      const admin = await this.adminService.findOne(admin_id);
+      if (!admin) throw new NotFoundException('Admin not found');
 
-      const existingLot = await this.lotsRepo.findOne({ where: { seller_id } });
+      // Check if lot with same tool already exists
+      const existingLot = await this.lotsRepo.findOne({
+        where: { tool_name, tool_type },
+      });
       if (existingLot) {
-        throw new ConflictException('Lots already exists');
+        throw new ConflictException('Lot with this tool already exists');
       }
 
-      const { description } = seller.data as any;
+      // Handle file uploads if provided
+      let imageUrl: string[] | undefined = undefined;
+      if (files && files.length > 0) {
+        imageUrl = await this.fileService.createFiles(files);
+      }
 
-      const newLot = this.lotsRepo.create({ ...createLotDto, description });
-
-      await this.sellerService.update(seller_id, { status: seller_status });
+      // Create new lot with seller information
+      const newLot = this.lotsRepo.create({
+        ...createLotDto,
+        image_url: imageUrl,
+      });
 
       await this.lotsRepo.save(newLot);
 
@@ -48,7 +59,7 @@ export class LotsService {
   async findAll() {
     try {
       const lots = await this.lotsRepo.find({
-        relations: ['interests', 'comments', 'seller', 'results'],
+        relations: ['interests', 'comments', 'results', 'aucsion'],
       });
       return succesMessage(lots);
     } catch (error) {
@@ -60,7 +71,7 @@ export class LotsService {
     try {
       const lot = await this.lotsRepo.findOne({
         where: { id },
-        relations: ['interests', 'comments', 'seller', 'results'],
+        relations: ['interests', 'comments', 'results', 'aucsion'],
       });
       if (!lot) {
         throw new NotFoundException('Lot not found');
@@ -71,11 +82,34 @@ export class LotsService {
     }
   }
 
-  async update(id: string, updateLotDto: UpdateLotDto) {
+  async update(
+    id: string,
+    updateLotDto: UpdateLotDto,
+    files?: Express.Multer.File[],
+  ) {
     try {
+      // Check if lot exists
+      const existingLot = await this.lotsRepo.findOne({ where: { id } });
+      if (!existingLot) {
+        throw new NotFoundException('Lot not found');
+      }
+
+      // Handle file uploads if provided
+      if (files && files.length > 0) {
+        // Delete old images if they exist
+        if (existingLot.image_url && existingLot.image_url.length > 0) {
+          await this.fileService.deleteFiles(existingLot.image_url);
+        }
+
+        // Upload new images
+        const imageUrl = await this.fileService.createFiles(files);
+        (updateLotDto as any).image_url = imageUrl;
+      }
+
       await this.lotsRepo.update(id, updateLotDto);
-      const lot = await this.findOne(id);
-      return lot;
+      const updatedLot = await this.lotsRepo.findOne({ where: { id } });
+
+      return succesMessage(updatedLot!);
     } catch (error) {
       handleError(error);
     }
@@ -83,9 +117,18 @@ export class LotsService {
 
   async remove(id: string) {
     try {
-      await this.findOne(id);
+      const lot = await this.lotsRepo.findOne({ where: { id } });
+      if (!lot) {
+        throw new NotFoundException('Lot not found');
+      }
+
+      // Delete associated images if they exist
+      if (lot.image_url && lot.image_url.length > 0) {
+        await this.fileService.deleteFiles(lot.image_url);
+      }
+
       await this.lotsRepo.delete(id);
-      return succesMessage({ message: 'Delete lot from ID' });
+      return succesMessage({ message: 'Lot deleted successfully' });
     } catch (error) {
       handleError(error);
     }

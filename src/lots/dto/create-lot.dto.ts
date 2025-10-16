@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDate,
@@ -20,8 +20,8 @@ export class CreateLotDto {
   address: string;
 
   @IsBoolean()
-  @IsOptional()
-  isPlaying: boolean;
+  @Transform(({ value }) => value === 'true' || value === true)
+  isPlaying?: boolean;
 
   @IsString()
   @IsNotEmpty()
@@ -50,4 +50,6 @@ export class CreateLotDto {
   @IsString()
   @IsNotEmpty()
   starting_bit: string;
+
+  // Removed seller_id as seller fields are now directly in lot
 }

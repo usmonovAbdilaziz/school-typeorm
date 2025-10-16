@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import Stripe from 'stripe';
 import { BuyerService } from '../buyer/buyer.service';
 import { handleError, succesMessage } from '../helpers/response';
-import { SellerService } from '../seller/seller.service';
+import { LotsService } from '../lots/lots.service';
 import { BuyerStatus } from '../roles/roles';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class PaymentsService {
     @InjectRepository(Payment)
     private readonly paymentRepo: Repository<Payment>,
     @Inject('STRIPE_CLIENT') private readonly stripe: Stripe,
-    private readonly sellerService: SellerService,
+    private readonly lotsService: LotsService,
     private readonly buyerService: BuyerService,
   ) {}
   async create(createPaymentDto: CreatePaymentDto) {
@@ -31,16 +31,16 @@ export class PaymentsService {
         throw new NotFoundException('Buyer not found');
       }
 
-      const sellers = await this.sellerService.findAll();
+      const lots = await this.lotsService.findAll();
       function fixPrice() {
-        if (sellers && Array.isArray(sellers.data)) {
+        if (lots && Array.isArray(lots.data)) {
           let allPrice = 0;
-          for (const seller of sellers.data) {
-            allPrice += Number(seller.starting_bit); // umumiy narx yig‘ish
+          for (const lot of lots.data) {
+            allPrice += Number(lot.starting_bit); // umumiy narx yig‘ish
           }
           return allPrice;
         } else {
-          throw new NotFoundException('Sellers data not found or invalid');
+          throw new NotFoundException('Lots data not found or invalid');
         }
       }
       const amountPrice = fixPrice();
@@ -141,6 +141,17 @@ export class PaymentsService {
     try {
       const payments = await this.paymentRepo.find({ relations: ['buyer'] });
       return succesMessage(payments);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+  async findOne(id: string) {
+    try {
+      const payment = await this.paymentRepo.findOne({ where: { buyer_id:id } });
+      if (!payment) {
+        throw new NotFoundException('Payment not found');
+      }
+      return succesMessage(payment);
     } catch (error) {
       handleError(error);
     }

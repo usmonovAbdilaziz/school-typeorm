@@ -16,5 +16,6 @@ import { AuthModule } from '../auth/auth.module';
   ],
   controllers: [AucsionResaultsController],
   providers: [AucsionResaultsService],
+  exports:[AucsionResaultsService]
 })
 export class AucsionResaultsModule {}

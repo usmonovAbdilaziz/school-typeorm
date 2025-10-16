@@ -1,4 +1,4 @@
-import { Payment } from 'src/payments/entities/payment.entity';
+import { Payment } from '../../payments/entities/payment.entity';
 import { AucsionResault } from '../../aucsion_resaults/entities/aucsion_resault.entity';
 import { Card } from '../../cards/entities/card.entity';
 import { LotCommet } from '../../lot_commets/entities/lot_commet.entity';
@@ -12,7 +12,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { BidHisory } from 'src/bit_history/entities/bit_history.entity';
+import { BidHisory } from '../../bit_history/entities/bit_history.entity';
 
 @Entity('buyers')
 export class Buyer {
@@ -34,11 +34,11 @@ export class Buyer {
   @Column({ type: 'enum', enum: BuyerStatus, default: BuyerStatus.Pending })
   buyerStatus: BuyerStatus;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 
   @OneToMany(() => LotCommet, (comment) => comment.buyer)
   comments: LotCommet[];
@@ -49,18 +49,12 @@ export class Buyer {
   @OneToMany(() => AucsionResault, (result) => result.buyer)
   results: AucsionResault[];
 
-  @OneToMany(() => Card, (result) => result.buyer)
+  @OneToMany(() => Card, (card) => card.buyer)
   cards: Card[];
 
-  @OneToMany(() => BidHisory, (result) => result.buyer)
+  @OneToMany(() => BidHisory, (bid) => bid.buyer)
   bids: BidHisory[];
 
-  @OneToMany(() => Payment, (result) => result.buyer)
-  payment: Payment;
-
-  @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
+  @OneToMany(() => Payment, (payment) => payment.buyer)
+  payments: Payment[];
 }

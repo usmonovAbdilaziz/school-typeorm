@@ -11,12 +11,12 @@ import { Token } from '../helpers/token';
     forwardRef(() => AdminsModule),
     forwardRef(() => BuyerModule),
     JwtModule.register({
-      secret: process.env.JWT_REFRESH_KEY as string,
-      signOptions: { expiresIn: process.env.JWT_REFRESH_TIME as string},
+      secret: process.env.JWT_ACCESS_KEY as string,
+      signOptions: { expiresIn: process.env.JWT_ACCESS_TIME as string },
     }),
   ],
   controllers: [AuthController],
   providers: [AuthService, Token],
-  exports: [Token, JwtModule], // ✅ bu to‘g‘ri
+  exports: [Token, JwtModule],
 })
 export class AuthModule {}

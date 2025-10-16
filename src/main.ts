@@ -5,6 +5,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as express from 'express';
 import { resolve } from 'path';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 const PORT = process.env.PORT!;
 
@@ -18,6 +19,8 @@ async function bootstrap() {
     '/api/v1/payments/webhook',
     express.raw({ type: 'application/json' }),
   );
+  //socket bilan ishash
+  app.useWebSocketAdapter(new IoAdapter(app));
   //get images
   app.use('/uploads', express.static(resolve(__dirname, '..', 'uploads')));
   // 🔓 CORS (Cross-Origin Resource Sharing) ni yoqadi — frontend backendga har qanday domen orqali murojaat qilishi mumkin

@@ -101,3 +101,5 @@ run stripe stripe listen --forward-to localhost:3001/api/v1/payments/webhook
 
  "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts",
    ga uzgartirilgan //"start:dev": "nest start --watch",
+
+  xattolarni aniqlash uchun // npm run start:dev --trace-warnings

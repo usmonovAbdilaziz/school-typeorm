@@ -8,6 +8,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { Admin } from '../../admins/entities/admin.entity';
 import { Lot } from '../../lots/entities/lot.entity';
@@ -26,7 +27,12 @@ export class Aucsion {
   @Column({ type: 'varchar' })
   lotId: string;
 
-  @ManyToOne(() => Admin, (admin) => admin.aucsions, { eager: true })
+  @ManyToOne(() => Admin, (admin) => admin.lots, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'adminId' })
   admin: Admin;
 
   @OneToMany(() => BidHisory, (bid) => bid.aucsion)

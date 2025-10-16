@@ -5,14 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Payment } from './entities/payment.entity';
 import { BuyerModule } from '../buyer/buyer.module';
 import { StripeProvider } from '../stripe/stripe.providers';
-import { SellerModule } from '../seller/seller.module';
 import { AuthModule } from '../auth/auth.module';
+import { LotsModule } from '../lots/lots.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Payment]),
     BuyerModule,
-    SellerModule,
+    LotsModule,
     AuthModule,
   ],
   controllers: [PaymentsController],

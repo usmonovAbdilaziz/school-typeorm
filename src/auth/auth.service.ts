@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Crypto } from '../helpers/hashed.pass';
 import { Token } from '../helpers/token';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -6,6 +6,7 @@ import { AdminsService } from '../admins/admins.service';
 import { BuyerService } from '../buyer/buyer.service';
 import { Request, Response } from 'express';
 import { handleError, succesMessage } from '../helpers/response';
+import { error } from 'console';
 
 @Injectable()
 export class AuthService {
@@ -27,24 +28,24 @@ export class AuthService {
         if (!pass) {
           throw new NotFoundException('Invalid password');
         }
-        const role='admin'
+        const role = 'admin';
         const payload = {
           adminId: admin.id,
           name: admin.full_name,
-          role
+          role,
         };
         const accessToken = await this.tokenService.generateAccesToken(payload);
         const refreshToken =
           await this.tokenService.generateRefreshToken(payload);
         res.cookie('AdminRefreshToken', refreshToken, { httpOnly: true });
-        return succesMessage({ token: accessToken,role }, 200);
+        return succesMessage({ admin,token: accessToken, role }, 200);
       }
       if (buyer) {
         const pass = await this.crypto.decrypt(password, buyer.password);
         if (!pass) {
           throw new NotFoundException('Invalid password');
         }
-        const role= 'buyer';
+        const role = 'buyer';
         const payload = {
           buyerId: buyer.id,
           name: buyer.full_name,
@@ -58,9 +59,9 @@ export class AuthService {
           httpOnly: true,
           secure: true,
         });
-        return succesMessage({ token: accessToken,role }, 200);
+        return succesMessage({buyer, token: accessToken, role }, 200);
       }
-      return succesMessage({ message: 'ruxsat etilmagan foydalanuvchi' });
+     throw new ConflictException({ message: 'ruxsat etilmagan foydalanuvchi' });
     } catch (error) {
       handleError(error);
     }
@@ -69,7 +70,7 @@ export class AuthService {
     try {
       const role = req.query.role;
 
-      if (role === 'adminToken') {
+      if (role === 'admin') {
         const oldToken = req.cookies['AdminRefreshToken'];
         if (!oldToken) {
           throw new NotFoundException('Admin refresh token topilmadi');
@@ -90,7 +91,7 @@ export class AuthService {
         return succesMessage({ token: newAccessToken }, 200);
       }
 
-      if (role === 'buyerToken') {
+      if (role === 'buyer') {
         const oldToken = req.cookies['BuyerRefreshToken'];
         if (!oldToken) {
           throw new NotFoundException('Buyer refresh token topilmadi');
@@ -114,22 +115,21 @@ export class AuthService {
       handleError(error);
     }
   }
-  async logout(res:Response,role:string){
+  async logout(res: Response, role: string) {
     try {
-      if (role === 'adminToken') {
+      if (role === 'admin') {
         res.clearCookie('AdminRefreshToken');
         return succesMessage({ message: 'Admin logout muvaffaqiyatli' }, 200);
       }
 
-      if (role === 'buyerToken') {
+      if (role === 'buyer') {
         res.clearCookie('BuyerRefreshToken');
         return succesMessage({ message: 'Buyer logout muvaffaqiyatli' }, 200);
       }
 
       return succesMessage({ message: 'Token turi aniqlanmadi' }, 400);
-
     } catch (error) {
-      handleError(error)
+      handleError(error);
     }
   }
 }

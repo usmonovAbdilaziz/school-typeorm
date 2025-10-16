@@ -50,6 +50,11 @@ export class PaymentsController {
   findAll() {
     return this.paymentsService.findAll();
   }
+  @Get(':id')
+  @UseGuards(AuthGuard, BuyerGuard)
+  findOne(@Param('id') id: string) {
+    return this.paymentsService.findOne(id);
+  }
 
   @Delete(':id')
   @UseGuards(AuthGuard, BuyerGuard)

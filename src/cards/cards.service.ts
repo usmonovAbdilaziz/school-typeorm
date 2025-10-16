@@ -17,27 +17,39 @@ export class CardsService {
     @InjectRepository(Card) private readonly cardRepo: Repository<Card>,
     private readonly buyerService: BuyerService,
   ) {}
+
   async create(createCardDto: CreateCardDto) {
     try {
       const { buyer_id, card_number, cvc, date } = createCardDto;
-      if (!(await this.buyerService.findOne(buyer_id)))
-        throw new NotFoundException('Buyer not fount');
-      if (await this.cardRepo.findOne({ where: { card_number, cvc } }))
-        throw new ConflictException('This card already exists');
 
+      // Check if buyer exists
+     const buyer= await this.buyerService.findOne(buyer_id);
+     if(!buyer){
+      throw new NotFoundException('Buyer not found')
+     }
+
+      // Check if card already exists
+      const existingCard = await this.cardRepo.findOne({
+        where: { card_number, cvc },
+      });
+      if (existingCard) {
+        throw new ConflictException('This card already exists');
+      }
+
+      // Validate card expiration date
       const now = new Date();
       const currentMonth = now.getMonth() + 1; // 0-based
       const currentYear = now.getFullYear();
-      const newDate = String(date).split('-');
-      if (Number(newDate[0]) < currentYear) {
-        throw new ConflictException('Karta muddati yy o‘tgan');
+      const [expYear, expMonth] = date.toString().split('-').map(Number);
+
+      if (expYear < currentYear) {
+        throw new ConflictException('Card expiration year has passed');
       }
-      if (
-        Number(newDate[0]) === currentYear &&
-        Number(newDate[1]) < currentMonth
-      ) {
-        throw new ConflictException('Karta muddati mm o‘tgan');
+
+      if (expYear === currentYear && expMonth < currentMonth) {
+        throw new ConflictException('Card expiration month has passed');
       }
+
       const newCard = this.cardRepo.create(createCardDto);
       await this.cardRepo.save(newCard);
       return succesMessage(newCard, 201);
@@ -48,7 +60,9 @@ export class CardsService {
 
   async findAll() {
     try {
-      const cards = await this.cardRepo.find({ relations: ['buyer'] });
+      const cards = await this.cardRepo.find({
+        relations: ['buyer'],
+      });
       return succesMessage(cards);
     } catch (error) {
       handleError(error);
@@ -57,7 +71,10 @@ export class CardsService {
 
   async findOne(id: string) {
     try {
-      const card = await this.cardRepo.findOne({ where: { id } });
+      const card = await this.cardRepo.findOne({
+        where: { buyer_id:id },
+        relations: ['buyer'],
+      });
       if (!card) {
         throw new NotFoundException('Card not found');
       }
@@ -69,9 +86,13 @@ export class CardsService {
 
   async update(id: string, updateCardDto: UpdateCardDto) {
     try {
+      // Validate card exists
+      await this.findOne(id);
+
+      // Update card
       await this.cardRepo.update(id, updateCardDto);
-      const newCard = await this.findOne(id);
-      return newCard;
+      const updatedCard = await this.findOne(id);
+      return updatedCard;
     } catch (error) {
       handleError(error);
     }
@@ -79,9 +100,12 @@ export class CardsService {
 
   async remove(id: string) {
     try {
+      // Validate card exists
       await this.findOne(id);
+
+      // Remove card
       await this.cardRepo.delete(id);
-      return succesMessage({ message: 'Deleted succesfully' });
+      return succesMessage({ message: 'Card deleted successfully' });
     } catch (error) {
       handleError(error);
     }
