@@ -103,3 +103,18 @@ run stripe stripe listen --forward-to localhost:3001/api/v1/payments/webhook
    ga uzgartirilgan //"start:dev": "nest start --watch",
 
   xattolarni aniqlash uchun // npm run start:dev --trace-warnings
+
+
+
+
+  1  user table unda role 2 ta 1-admin 2-user userda lotId[] buladi 
+  2 lot table data buladi qushimcha likeScount:number lot=aucsion userId[] array qatnashgan userlarId lar buladi lot uchun kutilayotgan tulov bor
+  lotAction:null (boshlkangungacha) table unda userId actionType(bid,like) amount va actionTime buladi lotgroups isActive:false admin true qiladi 
+  3 payment table unda userId lotId amount status (pending,completed,failed) paymentTime buladi                           
+  4 (register uchun) yangi kirayotgan user register qiladi, oldin kirgan user login qiladi default admin email va parol buladi
+  5 lotga ariza bersa (lotga qatnashaman degan) karta quishish tulov qilish buladi
+  6 userda deposit bulsin bu payments da tuldiriladi 
+  room working:{
+  lotId =room, user va admin lot 
+  }
+  7 lotalarni  actionlarini realtime korsatish uchun frontendda zustand va react query ishlatish kerak frontendda websocket tregger ishlatish kerak 

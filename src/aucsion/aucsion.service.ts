@@ -19,14 +19,19 @@ export class AucsionService {
   async create(createAucsionDto: CreateAucsionDto) {
     try {
       const { adminId, lotId } = createAucsionDto;
+
       const admin = await this.adminServise.findOne(adminId);
-      const lot = this.lotsService.findOne(lotId);
+      const lot = await this.lotsService.findOne(lotId); // ✅ await qo‘shildi
+
       if (!admin) throw new NotFoundException('Admin not found');
       if (!lot) throw new NotFoundException('Lot not found');
+
       await this.lotsService.update(lotId, { isPlaying: false });
+
       const newAucsion = this.aucsionRepo.create(createAucsionDto);
-      await this.aucsionRepo.save(newAucsion);
-      return succesMessage(newAucsion, 201);
+      await this.aucsionRepo.save(newAucsion); // ✅ id shu yerda hosil bo‘ladi
+
+      return succesMessage(newAucsion, 201); // ✅ endi id mavjud bo‘ladi
     } catch (error) {
       handleError(error);
     }
@@ -60,9 +65,9 @@ export class AucsionService {
 
   async update(id: string, updateAucsionDto: UpdateAucsionDto) {
     try {
-      await this.aucsionRepo.update(id,updateAucsionDto)
-      const aucsion = await this.findOne(id)
-      return aucsion
+      await this.aucsionRepo.update(id, updateAucsionDto);
+      const aucsion = await this.findOne(id);
+      return aucsion;
     } catch (error) {
       handleError(error);
     }
@@ -70,9 +75,9 @@ export class AucsionService {
 
   async remove(id: string) {
     try {
-      await this.findOne(id)
-      await this.aucsionRepo.delete({id})
-      return succesMessage({message:'Deleted aucsion succesfully'})
+      await this.findOne(id);
+      await this.aucsionRepo.delete({ id });
+      return succesMessage({ message: 'Deleted aucsion succesfully' });
     } catch (error) {
       handleError(error);
     }

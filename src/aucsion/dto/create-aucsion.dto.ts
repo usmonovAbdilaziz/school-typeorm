@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateAucsionDto {
-  
+
   @IsString()
   @IsNotEmpty()
   title: string;
