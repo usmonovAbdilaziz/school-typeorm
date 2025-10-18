@@ -1,4 +1,4 @@
-import { Aucsion } from '../../aucsion/entities/aucsion.entity';
+import { Aucsion } from '../../korzinka/entities/aucsion.entity';
 import { Lot } from '../../lots/entities/lot.entity';
 import {
   Column,

@@ -11,10 +11,13 @@ import { Lot } from './entities/lot.entity';
 import { Repository } from 'typeorm';
 import { AdminsService } from '../admins/admins.service';
 import { FileService } from '../file/file.service';
+import { BuyerService } from 'src/buyer/buyer.service';
+import { Buyer } from 'src/buyer/entities/buyer.entity';
 
 @Injectable()
 export class LotsService {
   constructor(
+    @InjectRepository(Buyer) private readonly buyerRepo: Repository<Buyer>,
     @InjectRepository(Lot) private readonly lotsRepo: Repository<Lot>,
     private readonly adminService: AdminsService,
     private readonly fileService: FileService,
@@ -59,7 +62,7 @@ export class LotsService {
   async findAll() {
     try {
       const lots = await this.lotsRepo.find({
-        relations: ['interests', 'comments', 'results', 'aucsion'],
+        relations: ['interests', 'comments', 'results', 'buyers'],
       });
       return succesMessage(lots);
     } catch (error) {
@@ -71,7 +74,7 @@ export class LotsService {
     try {
       const lot = await this.lotsRepo.findOne({
         where: { id },
-        relations: ['interests', 'comments', 'results', 'aucsion'],
+        relations: ['interests', 'comments', 'results', 'buyers'],
       });
       if (!lot) {
         throw new NotFoundException('Lot not found');
@@ -133,4 +136,47 @@ export class LotsService {
       handleError(error);
     }
   }
+  async getLotWithBuyers(lotId: string) {
+    //nechta user ariza berganini xisoblash
+    return this.lotsRepo.findOne({
+      where: { id: lotId },
+      relations: ['buyers'],
+    });
+  }
+
+  async leaveLot(lotId: string, buyerId: string) {
+    // buyerni lotdan chiqarib yuborish
+    const lot = await this.lotsRepo.findOne({
+      where: { id: lotId },
+      relations: ['buyers'],
+    });
+
+    if (!lot) throw new Error('Lot topilmadi');
+
+    lot.buyers = lot.buyers.filter((b) => b.id !== buyerId);
+    return await this.lotsRepo.save(lot);
+  }
+  async joinLot(lotId: string, buyerId: string) {
+    const lot = await this.lotsRepo.findOne({
+      where: { id: lotId },
+      relations: ['buyers'],
+    });
+
+    if (!lot) throw new Error('Lot topilmadi');
+
+    const buyer = this.buyerRepo.create({ id: buyerId }); // faqat ID bilan entity
+
+    // buyer allaqachon mavjud emasligini tekshiramiz
+    const alreadyJoined = lot.buyers.some((b) => b.id === buyerId);
+    if (!alreadyJoined) {
+      lot.buyers.push(buyer);
+      await this.lotsRepo.save(lot);
+    }
+
+    return await this.lotsRepo.findOne({
+      where: { id: lotId },
+      relations: ['buyers'],
+    });
+  }
 }
+// database ni tuliq uchirib kein ishga tushur 

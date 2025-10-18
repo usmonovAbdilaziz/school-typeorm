@@ -6,6 +6,7 @@ import { Lot } from './entities/lot.entity';
 import { AuthModule } from '../auth/auth.module';
 import { AdminsModule } from '../admins/admins.module';
 import { FileModule } from '../file/file.module';
+import { BuyerModule } from 'src/buyer/buyer.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { FileModule } from '../file/file.module';
     AuthModule,
     AdminsModule,
     FileModule,
+    BuyerModule
   ],
   controllers: [LotsController],
   providers: [LotsService],

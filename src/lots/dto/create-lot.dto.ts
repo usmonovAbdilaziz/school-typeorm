@@ -4,6 +4,8 @@ import {
   IsDate,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
+  IsObject,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -28,6 +30,14 @@ export class CreateLotDto {
   admin_id: string;
 
   @IsString()
+  @IsOptional()
+  buyer_id?: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  likesCount: number;
+
+  @IsString()
   @IsNotEmpty()
   full_name: string;
 
@@ -43,9 +53,12 @@ export class CreateLotDto {
   @IsOptional()
   status: LotStatus;
 
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
-  description: string;
+  description: {
+    key: string;
+    val: string;
+  };
 
   @IsString()
   @IsNotEmpty()

@@ -2,27 +2,28 @@ import { CreateBitHistoryDto } from './dto/create-bit_history.dto';
 import { UpdateBitHistoryDto } from './dto/update-bit_history.dto';
 import { handleError, succesMessage } from '../helpers/response';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { AucsionService } from '../aucsion/aucsion.service';
 import { BidHisory } from './entities/bit_history.entity';
 import { BuyerService } from '../buyer/buyer.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { LotsService } from 'src/lots/lots.service';
 
 @Injectable()
 export class BitHistoryService {
   constructor(
     @InjectRepository(BidHisory)
     private readonly bitRepo: Repository<BidHisory>,
-    private readonly aucsionService: AucsionService,
     private readonly buyerService: BuyerService,
+    private readonly lotService: LotsService,
   ) {}
   async create(createBitHistoryDto: CreateBitHistoryDto) {
     try {
-      const { auctionId, buyerId } = createBitHistoryDto;
-      const aucsion = await this.aucsionService.findOne(auctionId);
-      if (!aucsion) throw new NotFoundException('Aucsion not found');
-      if (!(await this.buyerService.findOne(buyerId)))
-        throw new NotFoundException('Buyer not found');
+      const {
+        lotId,
+        lotAction: { buyerId: string, amount: number },
+      } = createBitHistoryDto;
+      if (!(await this.lotService.findOne(lotId)))
+        throw new NotFoundException('Lot  not found');
       const newBid = this.bitRepo.create(createBitHistoryDto);
       await this.bitRepo.save(newBid);
       return succesMessage(newBid, 201);
@@ -54,9 +55,34 @@ export class BitHistoryService {
 
   async update(id: string, updateBitHistoryDto: UpdateBitHistoryDto) {
     try {
-      await this.bitRepo.update(id, updateBitHistoryDto);
-      const newBit = await this.findOne(id);
-      return newBit;
+      const bit = await this.bitRepo.findOne({ where: { id } });
+      if (!bit) throw new NotFoundException('Bit topilmadi');
+
+      // Eski lotAction massiv yoki string bo‘lishi mumkin
+      let actions:any = [];
+
+      // Agar JSON string bo‘lsa — parse qilamiz
+      if (typeof bit.lotAction === 'string') {
+        actions = JSON.parse(bit.lotAction);
+      } else if (Array.isArray(bit.lotAction)) {
+        actions = bit.lotAction;
+      }
+
+      // Yangi action obyekt
+      const newAction = {
+        buyerId: updateBitHistoryDto.lotAction!.buyerId,
+        amount: updateBitHistoryDto.lotAction!.amount,
+        actionTime: new Date(),
+      };
+
+      // Massivga qo‘shamiz
+      actions.push(newAction);
+
+      // Qaytadan stringga o‘tkazamiz (agar type json bo‘lsa ham ishlaydi)
+      bit.lotAction = actions;
+
+      await this.bitRepo.save(bit);
+      return bit;
     } catch (error) {
       handleError(error);
     }
@@ -70,11 +96,5 @@ export class BitHistoryService {
     } catch (error) {
       handleError(error);
     }
-  }
-  async getHighestByAuction(auctionId: string) {
-    return await this.bitRepo.findOne({
-      where: { auctionId },
-      order: { amount: 'DESC' },
-    });
   }
 }

@@ -13,9 +13,7 @@ import { AucsionResaultsModule } from './aucsion_resaults/aucsion_resaults.modul
 import { CardsModule } from './cards/cards.module';
 import { AuthModule } from './auth/auth.module';
 import { BitHistoryModule } from './bit_history/bit_history.module';
-import { AucsionModule } from './aucsion/aucsion.module';
 import { AuctionGateway } from './modules/auction/auction/auction.gateway';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -55,7 +53,6 @@ import { AuctionGateway } from './modules/auction/auction/auction.gateway';
     CardsModule,
     AuthModule,
     BitHistoryModule,
-    AucsionModule,
   ],
   providers: [AuctionGateway],
 })

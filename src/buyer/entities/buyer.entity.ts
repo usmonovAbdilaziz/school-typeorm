@@ -11,8 +11,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { BidHisory } from '../../bit_history/entities/bit_history.entity';
+import { Lot } from 'src/lots/entities/lot.entity';
 
 @Entity('buyers')
 export class Buyer {
@@ -26,7 +29,7 @@ export class Buyer {
   password: string;
 
   @Column({ type: 'varchar' })
-  buyerPass: string;
+  hash: string;
 
   @Column({ length: 180, unique: true })
   email: string;
@@ -40,9 +43,6 @@ export class Buyer {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @OneToMany(() => LotCommet, (comment) => comment.buyer)
-  comments: LotCommet[];
-
   @OneToMany(() => LotInterested, (interest) => interest.buyer)
   interests: LotInterested[];
 
@@ -52,9 +52,10 @@ export class Buyer {
   @OneToMany(() => Card, (card) => card.buyer)
   cards: Card[];
 
-  @OneToMany(() => BidHisory, (bid) => bid.buyer)
-  bids: BidHisory[];
-
   @OneToMany(() => Payment, (payment) => payment.buyer)
   payments: Payment[];
+
+  @ManyToMany(() => Lot, (data) => data.buyers)
+  @JoinTable()
+  lots: Lot[];
 }

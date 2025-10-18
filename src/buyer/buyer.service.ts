@@ -29,7 +29,7 @@ export class BuyerService {
       const newBuyer = this.buyerRepo.create({
         ...createBuyerDto,
         password: hashPass,
-        buyerPass: password,
+        hash: password,
       });
       await this.buyerRepo.save(newBuyer);
       return succesMessage(newBuyer, 201);
@@ -44,10 +44,9 @@ export class BuyerService {
         relations: [
           'cards',
           'interests',
-          'comments',
           'results',
           'payments',
-          'bids',
+          'lots'
         ],
       });
       return succesMessage(buyers);
@@ -63,10 +62,9 @@ export class BuyerService {
         relations: [
           'cards',
           'interests',
-          'comments',
           'results',
           'payments',
-          'bids',
+          'lots',
         ],
       });
       if (!buyer) {
@@ -124,4 +122,5 @@ export class BuyerService {
   async findByEmail(email: string) {
     return this.buyerRepo.findOne({ where: { email } });
   }
+  
 }

@@ -15,10 +15,10 @@ import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AucsionService } from '../../../aucsion/aucsion.service';
+import { AucsionService } from '../../../korzinka/aucsion.service';
 import { BitHistoryService } from '../../../bit_history/bit_history.service';
 import { AucsionResaultsService } from '../../../aucsion_resaults/aucsion_resaults.service';
-import { CreateAucsionDto } from '../../../aucsion/dto/create-aucsion.dto';
+import { CreateAucsionDto } from '../../../korzinka/dto/create-aucsion.dto';
 import { CreateBitHistoryDto } from '../../../bit_history/dto/create-bit_history.dto';
 import { BuyerService } from '../../../buyer/buyer.service';
 import { handleError } from '../../../helpers/response';

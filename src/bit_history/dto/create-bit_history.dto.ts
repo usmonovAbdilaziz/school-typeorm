@@ -1,15 +1,15 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
 
 export class CreateBitHistoryDto {
   @IsString()
   @IsNotEmpty()
-  buyerId: string;
+  lotId: string;
 
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
-  auctionId: string;
+  lotAction:{
+    buyerId:string,
+    amount:number
+  }
 
-  @IsNumber()
-  @IsNotEmpty()
-  amount: number;
 }
