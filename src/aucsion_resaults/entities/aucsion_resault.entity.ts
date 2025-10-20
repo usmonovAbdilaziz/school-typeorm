@@ -38,7 +38,7 @@ export class AucsionResault {
   @JoinColumn({ name: 'buyer_id' })
   buyer: Buyer;
 
-  @ManyToOne(() => Lot, (lot) => lot.results, {
+  @ManyToOne(() => Lot, (lot) => lot.result, {
     nullable: false,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

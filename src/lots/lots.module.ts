@@ -6,11 +6,13 @@ import { Lot } from './entities/lot.entity';
 import { AuthModule } from '../auth/auth.module';
 import { AdminsModule } from '../admins/admins.module';
 import { FileModule } from '../file/file.module';
-import { BuyerModule } from 'src/buyer/buyer.module';
+import { BuyerModule } from '../buyer/buyer.module';
+import { Buyer } from '../buyer/entities/buyer.entity';
+import { Admin } from '../admins/entities/admin.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Lot]),
+    TypeOrmModule.forFeature([Lot,Buyer,Admin]),
     AuthModule,
     AdminsModule,
     FileModule,

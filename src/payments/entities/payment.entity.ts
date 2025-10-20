@@ -17,7 +17,7 @@ export class Payment {
   @Column({ type: 'varchar' })
   buyer_id: string;
 
-  @ManyToOne(() => Buyer, (buyer) => buyer.interests, {
+  @ManyToOne(() => Buyer, (buyer) => buyer.payments, {
     nullable: false,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

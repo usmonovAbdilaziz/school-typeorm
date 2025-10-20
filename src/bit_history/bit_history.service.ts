@@ -6,7 +6,7 @@ import { BidHisory } from './entities/bit_history.entity';
 import { BuyerService } from '../buyer/buyer.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { LotsService } from 'src/lots/lots.service';
+import { LotsService } from '../lots/lots.service';
 
 @Injectable()
 export class BitHistoryService {
@@ -59,7 +59,7 @@ export class BitHistoryService {
       if (!bit) throw new NotFoundException('Bit topilmadi');
 
       // Eski lotAction massiv yoki string bo‘lishi mumkin
-      let actions:any = [];
+      let actions: any = [];
 
       // Agar JSON string bo‘lsa — parse qilamiz
       if (typeof bit.lotAction === 'string') {

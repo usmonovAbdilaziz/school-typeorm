@@ -8,10 +8,12 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
-import { SellerType } from '../../roles/roles';
-import { Buyer } from 'src/buyer/entities/buyer.entity';
+import { AuctionStatus, SellerType } from '../../roles/roles';
+import { Buyer } from '../../buyer/entities/buyer.entity';
 import { Admin } from '../../admins/entities/admin.entity';
+import { AucsionResault } from '../../aucsion_resaults/entities/aucsion_resault.entity';
 
 @Entity('lots')
 export class Lot {
@@ -36,8 +38,12 @@ export class Lot {
   @Column({ type: 'varchar' }) // lot uynaladigan hudud
   address: string;
 
-  @Column({ type: 'boolean', default: true })
-  isPlaying: boolean; //false bulsa uynalganlarga utadi
+  @Column({
+    type: 'enum',
+    enum: AuctionStatus,
+    default: AuctionStatus.PENDING,//yaratilganda pending buladi uynalayotganda playing yutilsa played agar uyin tuxtatilsa cancelled buladi
+  })
+  status: AuctionStatus; //lot uchun  PENDING PLAYING PLAYED CANCELLED xolatlari
 
   @Column({ type: 'boolean', default: false })
   isActive: boolean; // true bulsa admin aucsion ga kiritgan buladi aucsion tugagach false buladi yana kein uynalganlarga qushiladi
@@ -56,6 +62,13 @@ export class Lot {
 
   @Column({ type: 'json', nullable: true }) //lot uchun rasimlar
   image_url: string[];
+
+  @Column({ type: 'json', nullable: true }) //lot uchun info file
+  lotFile: string;
+
+   @OneToMany(() => AucsionResault, (result) => result.lot)
+  result: AucsionResault;
+
   @ManyToMany(() => Buyer, (buyer) => buyer.lots, { cascade: true })
   @JoinTable({
     name: 'lot_buyers', // o‘rta jadval nomi

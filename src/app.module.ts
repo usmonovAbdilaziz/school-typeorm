@@ -7,13 +7,10 @@ import { AdminsModule } from './admins/admins.module';
 import { BuyerModule } from './buyer/buyer.module';
 import { PaymentsModule } from './payments/payments.module';
 import { LotsModule } from './lots/lots.module';
-import { LotInterestedModule } from './lot_interested/lot_interested.module';
-import { LotCommetsModule } from './lot_commets/lot_commets.module';
 import { AucsionResaultsModule } from './aucsion_resaults/aucsion_resaults.module';
 import { CardsModule } from './cards/cards.module';
 import { AuthModule } from './auth/auth.module';
 import { BitHistoryModule } from './bit_history/bit_history.module';
-import { AuctionGateway } from './modules/auction/auction/auction.gateway';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -47,13 +44,11 @@ import { AuctionGateway } from './modules/auction/auction/auction.gateway';
     BuyerModule,
     PaymentsModule,
     LotsModule,
-    LotInterestedModule,
-    LotCommetsModule,
     AucsionResaultsModule,
     CardsModule,
     AuthModule,
     BitHistoryModule,
   ],
-  providers: [AuctionGateway],
+  // providers: [AuctionGateway],
 })
 export class AppModule {}

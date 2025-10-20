@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 @Injectable()
 export class FileService {
   private allowedExtensions = ['jpg', 'jpeg', 'png']; // ruxsat etilgan formatlar
+  private allowedExtensionsfile = ['pdf', 'docx']; // ruxsat etilgan formatlar
 
   async createFile(file: Express.Multer.File): Promise<string> {
     this.validateFile(file);
@@ -32,7 +33,8 @@ export class FileService {
     }
   }
 
-  async createFiles(files: Express.Multer.File[]): Promise<string[]> {
+  async createFiles(images: Express.Multer.File[]): Promise<string[]> {
+    let files = images
     if (!files || files.length === 0) {
       throw new BadRequestException('No files uploaded');
     }
@@ -72,6 +74,37 @@ export class FileService {
       );
     } catch (error) {
       throw new BadRequestException('File delete error');
+    }
+  }
+  private async validateFileToFile(file: Express.Multer.File) {
+    const ext = file.originalname.split('.').pop()?.toLowerCase();
+    if (!ext || !this.allowedExtensionsfile.includes(ext)) {
+      throw new BadRequestException(
+        `Only allowed extensions: ${this.allowedExtensionsfile.join(', ')}`,
+      );
+    }
+  }
+  async createFileToFile(lotFile: Express.Multer.File): Promise<string> {
+   await this.validateFileToFile(lotFile);
+
+    try {
+      const fileName = `${v4()}_${lotFile.originalname}`;
+      const filePath = resolve(__dirname, '..', '..', 'uploadsFile');
+
+      if (!existsSync(filePath)) {
+        mkdirSync(filePath, { recursive: true });
+      }
+
+      await new Promise<void>((res, rej) => {
+        writeFile(join(filePath, fileName), lotFile.buffer, (err) => {
+          if (err) rej(err);
+          res();
+        });
+      });
+
+      return fileName;
+    } catch (error) {
+      throw new BadRequestException('File upload error');
     }
   }
 }

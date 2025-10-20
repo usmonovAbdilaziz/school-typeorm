@@ -23,10 +23,12 @@ async function bootstrap() {
   app.useWebSocketAdapter(new IoAdapter(app));
   //get images
   app.use('/uploads', express.static(resolve(__dirname, '..', 'uploads')));
+  app.use('/uploadsFile', express.static(resolve(__dirname, '..', 'uploadsFile')));
   // 🔓 CORS (Cross-Origin Resource Sharing) ni yoqadi — frontend backendga har qanday domen orqali murojaat qilishi mumkin
   app.enableCors({
-    origin: '*', // barcha domenlarga ruxsat
+    origin: '*',
   });
+
   //coocie bilan ishlash
   app.use(coockieParser());
 
@@ -40,7 +42,9 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   // 🚀 Serverni belgilangan portda ishga tushiradi va konsolga log chiqaradi
-  await app.listen(PORT, () => console.log('Server running on port ', PORT));
+  await app.listen(PORT,  () =>
+    console.log('Server running on port ', PORT),
+  );
 }
 
 // 📌 Bootstrap funksiyasini chaqirish — ilovani ishga tushirish

@@ -41,13 +41,7 @@ export class BuyerService {
   async findAll() {
     try {
       const buyers = await this.buyerRepo.find({
-        relations: [
-          'cards',
-          'interests',
-          'results',
-          'payments',
-          'lots'
-        ],
+        relations: ['results', 'cards', 'payments', 'lots'],
       });
       return succesMessage(buyers);
     } catch (error) {
@@ -59,13 +53,7 @@ export class BuyerService {
     try {
       const buyer = await this.buyerRepo.findOne({
         where: { id },
-        relations: [
-          'cards',
-          'interests',
-          'results',
-          'payments',
-          'lots',
-        ],
+        relations: ['results', 'cards', 'payments', 'lots'],
       });
       if (!buyer) {
         throw new NotFoundException('Buyer not found');

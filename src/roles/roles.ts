@@ -24,8 +24,10 @@ export enum Currency {
   EUR = 'EUR',
   RUB = 'RUB',
 }
-export enum LotStatus {
-  Pending = 'Pending',
-  Approved = 'Approved',
-  Cancelled = 'Cancelled',
+export enum AuctionStatus {
+  PENDING = 'pending',
+  PLAYING = 'playing',
+  PLAYED = 'played',
+  CANCELLED = 'cancelled',
 }
+

@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('bit-history')
 export class BidHisory {
   @PrimaryGeneratedColumn('uuid')
   id: string;

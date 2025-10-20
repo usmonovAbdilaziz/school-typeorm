@@ -1,9 +1,7 @@
 import { Payment } from '../../payments/entities/payment.entity';
 import { AucsionResault } from '../../aucsion_resaults/entities/aucsion_resault.entity';
 import { Card } from '../../cards/entities/card.entity';
-import { LotCommet } from '../../lot_commets/entities/lot_commet.entity';
-import { LotInterested } from '../../lot_interested/entities/lot_interested.entity';
-import { BuyerStatus } from '../../roles/roles';
+import { BuyerStatus, SellerType } from '../../roles/roles';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -14,8 +12,7 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { BidHisory } from '../../bit_history/entities/bit_history.entity';
-import { Lot } from 'src/lots/entities/lot.entity';
+import { Lot } from '../../lots/entities/lot.entity';
 
 @Entity('buyers')
 export class Buyer {
@@ -34,6 +31,9 @@ export class Buyer {
   @Column({ length: 180, unique: true })
   email: string;
 
+  @Column({ type: 'enum',nullable: true, enum: SellerType })
+  interested: SellerType;
+
   @Column({ type: 'enum', enum: BuyerStatus, default: BuyerStatus.Pending })
   buyerStatus: BuyerStatus;
 
@@ -42,9 +42,6 @@ export class Buyer {
 
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
-
-  @OneToMany(() => LotInterested, (interest) => interest.buyer)
-  interests: LotInterested[];
 
   @OneToMany(() => AucsionResault, (result) => result.buyer)
   results: AucsionResault[];
@@ -56,6 +53,5 @@ export class Buyer {
   payments: Payment[];
 
   @ManyToMany(() => Lot, (data) => data.buyers)
-  @JoinTable()
   lots: Lot[];
 }

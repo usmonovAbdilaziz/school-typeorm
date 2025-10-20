@@ -40,7 +40,7 @@ export class AdminsService {
   async findAll() {
     try {
       const admins = await this.adminRepo.find({
-        relations: ['lots', 'aucsions'],
+        relations: ['lots', ],
       });
       return succesMessage(admins);
     } catch (error) {
@@ -52,7 +52,7 @@ export class AdminsService {
     try {
       const admin = await this.adminRepo.findOne({
         where: { id },
-        relations: ['lots', 'aucsions'],
+        relations: ['lots',],
       });
       if (!admin) {
         throw new NotFoundException('Admin not found');

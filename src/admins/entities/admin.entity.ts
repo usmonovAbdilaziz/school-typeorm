@@ -1,4 +1,4 @@
-import { Aucsion } from '../../korzinka/entities/aucsion.entity';
+
 import { Lot } from '../../lots/entities/lot.entity';
 import {
   Column,
@@ -25,9 +25,6 @@ export class Admin {
 
   @OneToMany(() => Lot, (lot) => lot.admin)
   lots: Lot[];
-
-  @OneToMany(() => Aucsion, (aucsion) => aucsion.admin)
-  aucsions: Aucsion[];
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

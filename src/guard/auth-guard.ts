@@ -6,7 +6,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Token } from '../helpers/token';
-import { handleError } from 'src/helpers/response';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
