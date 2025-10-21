@@ -1,6 +1,7 @@
 import {
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
@@ -15,6 +16,10 @@ export class CreatePaymentDto {
   @IsString()
   @IsNotEmpty()
   provider: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number;
 
   @IsEnum(Currency)
   @IsNotEmpty()

@@ -2,6 +2,7 @@ import { Buyer } from '../../buyer/entities/buyer.entity';
 import { BuyerStatus, Currency } from '../../roles/roles';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -42,4 +43,7 @@ export class Payment {
 
   @Column({ type: 'json' })
   metadata: JSON;
+
+  @CreateDateColumn()
+  created_at: Date;
 }

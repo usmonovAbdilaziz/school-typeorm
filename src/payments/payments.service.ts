@@ -25,27 +25,28 @@ export class PaymentsService {
   ) {}
   async create(createPaymentDto: CreatePaymentDto) {
     try {
-      const { buyer_id, metadata, currency, provider } = createPaymentDto;
+      const { buyer_id, metadata, currency, provider, amount } =
+        createPaymentDto;
       const buyer = await this.buyerService.findOne(buyer_id);
       if (!buyer) {
         throw new NotFoundException('Buyer not found');
       }
 
-      const lots = await this.lotsService.findAll();
-      function fixPrice() {
-        if (lots && Array.isArray(lots.data)) {
-          let allPrice = 0;
-          for (const lot of lots.data) {
-            allPrice += Number(lot.starting_bit); // umumiy narx yig‘ish
-          }
-          return allPrice;
-        } else {
-          throw new NotFoundException('Lots data not found or invalid');
-        }
-      }
-      const amountPrice = fixPrice();
+      // const lots = await this.lotsService.findAll();
+      // function fixPrice() {
+      //   if (lots && Array.isArray(lots.data)) {
+      //     let allPrice = 0;
+      //     for (const lot of lots.data) {
+      //       allPrice += Number(lot.starting_bit); // umumiy narx yig‘ish
+      //     }
+      //     return allPrice;
+      //   } else {
+      //     throw new NotFoundException('Lots data not found or invalid');
+      //   }
+      // // }
+      // const amountPrice = fixPrice();
       const paymentIntent = await this.stripe.paymentIntents.create({
-        amount: (amountPrice / 2) * 100, //jami lotlarning 50% ga tulov olish
+       amount:amount*100, //jami lotlarning 50% ga tulov olish
         currency: currency.toLowerCase(),
         metadata: {
           buyer_id,
@@ -61,7 +62,7 @@ export class PaymentsService {
 
       const payment = this.paymentRepo.create({
         buyer_id,
-        amount: amountPrice / 2,
+        amount,
         provider,
         providerTransactionId: paymentIntent.id, // charge.id yoki paymentIntent.id ni saqlash
         currency,
@@ -100,8 +101,6 @@ export class PaymentsService {
           );
           return { received: true, warning: 'Payment not found' };
         }
-
-        console.log(event.type);
 
         // 🎯 SUCCESS bo‘lsa — Paid, else — Cancelled
         if (
