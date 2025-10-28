@@ -113,6 +113,7 @@ export class LotsService {
     images?: Express.Multer.File[],
     lotFile?: Express.Multer.File,
   ) {
+    
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -136,6 +137,11 @@ export class LotsService {
         }
         updateData.lotFile = await this.fileService.createFileToFile(lotFile);
       }
+      if (typeof updateLotDto.likesCount !== 'undefined') {        
+        lot.likesCount = (lot.likesCount || 0) + updateLotDto.likesCount;
+        this.lotsRepo.save(lot)
+      }
+
 
       await queryRunner.manager.update(Lot, id, updateData);
       const updatedLot: any = await queryRunner.manager.findOne(Lot, {
@@ -216,73 +222,6 @@ export class LotsService {
       await queryRunner.release();
     }
   }
-
-  async removeFromLot(lotId: string, buyerId: string) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const lot = await this.lotsRepo.findOne({
-        where: { id: lotId },
-        relations: ['buyers'],
-      });
-      if (!lot) throw new NotFoundException('Lot not found');
-
-      if (lot.status === AuctionStatus.PLAYING) {
-        throw new BadRequestException('Cannot leave active auction');
-      }
-
-      const buyerExists = lot.buyers.some((b) => b.id === buyerId);
-      if (!buyerExists) {
-        throw new BadRequestException('Not in this lot');
-      }
-
-      lot.buyers = lot.buyers.filter((b) => b.id !== buyerId);
-      await queryRunner.manager.save(lot);
-      await queryRunner.commitTransaction();
-
-      return succesMessage({ message: 'Removed successfully' });
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      handleError(error);
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
-  async getLotBuyers(lotId: string) {
-    try {
-      const lot = await this.lotsRepo.findOne({
-        where: { id: lotId },
-        relations: ['buyers'],
-      });
-      if (!lot) throw new NotFoundException('Lot not found');
-
-      return succesMessage({
-        lotId: lot.id,
-        buyers: lot.buyers,
-        buyersCount: lot.buyers.length,
-      });
-    } catch (error) {
-      handleError(error);
-    }
-  }
-
-  async getBuyerLots(buyerId: string) {
-    try {
-      const buyer = await this.buyerRepo.findOne({
-        where: { id: buyerId },
-        relations: ['lots'],
-      });
-      if (!buyer) throw new NotFoundException('Buyer not found');
-
-      return succesMessage(buyer.lots);
-    } catch (error) {
-      handleError(error);
-    }
-  }
-
   // ==================== STATUS ====================
 
   async updateLotStatus(lotId: string, status: AuctionStatus) {

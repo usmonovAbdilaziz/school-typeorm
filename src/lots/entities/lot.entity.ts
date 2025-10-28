@@ -23,11 +23,8 @@ export class Lot {
   @Column({ type: 'varchar' })
   starting_bit: string; //boshlang'ich summa
 
-  @Column({ type: 'json' }) // lot6 haqida malumotlar
-  description: {
-    key: string;
-    val: string;
-  };
+  @Column({ type: 'json' })
+  description: { key: string; val: string }[];
 
   @Column({ type: 'varchar' }) // lot noimi kimtomonidan quyilmoqda info
   tool_name: string;
@@ -38,10 +35,13 @@ export class Lot {
   @Column({ type: 'varchar' }) // lot uynaladigan hudud
   address: string;
 
+  @Column({type:"varchar",nullable:true})
+  info:string
+
   @Column({
     type: 'enum',
     enum: AuctionStatus,
-    default: AuctionStatus.PENDING,//yaratilganda pending buladi uynalayotganda playing yutilsa played agar uyin tuxtatilsa cancelled buladi
+    default: AuctionStatus.PENDING, //yaratilganda pending buladi uynalayotganda playing yutilsa played agar uyin tuxtatilsa cancelled buladi
   })
   status: AuctionStatus; //lot uchun  PENDING PLAYING PLAYED CANCELLED xolatlari
 
@@ -66,7 +66,7 @@ export class Lot {
   @Column({ type: 'json', nullable: true }) //lot uchun info file
   lotFile: string;
 
-   @OneToMany(() => AucsionResault, (result) => result.lot)
+  @OneToMany(() => AucsionResault, (result) => result.lot)
   result: AucsionResault;
 
   @ManyToMany(() => Buyer, (buyer) => buyer.lots, { cascade: true })

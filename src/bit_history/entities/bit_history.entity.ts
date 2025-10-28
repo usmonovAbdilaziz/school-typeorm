@@ -12,12 +12,12 @@ export class BidHisory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'json' })
+  @Column({ type: 'jsonb',default:[] })
   lotAction: {
     buyerId: string;
     amount: number;
     actionTime: Date;
-  };
+  }[];
 
   @Column({ type: 'varchar' })
   lotId: string;

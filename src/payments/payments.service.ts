@@ -11,8 +11,8 @@ import { Repository } from 'typeorm';
 import Stripe from 'stripe';
 import { BuyerService } from '../buyer/buyer.service';
 import { handleError, succesMessage } from '../helpers/response';
-import { LotsService } from '../lots/lots.service';
 import { BuyerStatus } from '../roles/roles';
+import { CardsService } from '../cards/cards.service';
 
 @Injectable()
 export class PaymentsService {
@@ -20,18 +20,18 @@ export class PaymentsService {
     @InjectRepository(Payment)
     private readonly paymentRepo: Repository<Payment>,
     @Inject('STRIPE_CLIENT') private readonly stripe: Stripe,
-    private readonly lotsService: LotsService,
+    private readonly cardsService: CardsService,
     private readonly buyerService: BuyerService,
   ) {}
   async create(createPaymentDto: CreatePaymentDto) {
     try {
-      const { buyer_id, metadata, currency, provider, amount } =
+      const { buyer_id, metadata, currency, provider, amount, card_id } =
         createPaymentDto;
       const buyer = await this.buyerService.findOne(buyer_id);
       if (!buyer) {
         throw new NotFoundException('Buyer not found');
       }
-
+      await this.cardsService.cardsId(card_id);
       // const lots = await this.lotsService.findAll();
       // function fixPrice() {
       //   if (lots && Array.isArray(lots.data)) {
@@ -46,7 +46,7 @@ export class PaymentsService {
       // // }
       // const amountPrice = fixPrice();
       const paymentIntent = await this.stripe.paymentIntents.create({
-       amount:amount*100, //jami lotlarning 50% ga tulov olish
+        amount: amount * 100, //jami lotlarning 50% ga tulov olish
         currency: currency.toLowerCase(),
         metadata: {
           buyer_id,
@@ -136,9 +136,12 @@ export class PaymentsService {
     }
   }
 
-  async findAll() {
+  async findAll(id: string) {
     try {
-      const payments = await this.paymentRepo.find({ relations: ['buyer'] });
+      const payments = await this.paymentRepo.find({
+        where: { buyer_id: id },
+        relations: ['buyer'],
+      });
       return succesMessage(payments);
     } catch (error) {
       handleError(error);
@@ -146,7 +149,9 @@ export class PaymentsService {
   }
   async findOne(id: string) {
     try {
-      const payment = await this.paymentRepo.findOne({ where: { buyer_id:id } });
+      const payment = await this.paymentRepo.findOne({
+        where: { buyer_id: id },
+      });
       if (!payment) {
         throw new NotFoundException('Payment not found');
       }

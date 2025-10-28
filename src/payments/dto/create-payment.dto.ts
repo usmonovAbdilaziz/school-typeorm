@@ -17,6 +17,10 @@ export class CreatePaymentDto {
   @IsNotEmpty()
   provider: string;
 
+  @IsString()
+  @IsNotEmpty()
+  card_id: string;
+
   @IsNumber()
   @IsNotEmpty()
   amount: number;

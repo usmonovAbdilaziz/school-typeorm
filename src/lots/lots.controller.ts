@@ -21,31 +21,32 @@ import {
   FileInterceptor,
   FilesInterceptor,
 } from '@nestjs/platform-express';
-import { AuctionStatus } from 'src/roles/roles';
+import { AuctionStatus } from '../roles/roles';
 
 @Controller('lots')
 export class LotsController {
   constructor(private readonly lotsService: LotsService) {}
-  @Post()
+ @Post()
   @UseInterceptors(
     FileFieldsInterceptor([
-      { name: 'images', maxCount: 10 },
-      { name: 'lotFile', maxCount: 1 },
+      { name: 'images', maxCount: 10 }, // bir nechta rasm
+      { name: 'lotFile', maxCount: 1 }, // bitta pdf
     ]),
   )
   async create(
-    @Body() createLotDto: CreateLotDto,
     @UploadedFiles()
     files: {
       images?: Express.Multer.File[];
       lotFile?: Express.Multer.File[];
     },
+    @Body() createLotDto: CreateLotDto,
   ) {
     const images = files.images || [];
     const lotFile = files.lotFile?.[0];
 
     return this.lotsService.create(createLotDto, images, lotFile);
   }
+
 
   @Get()
   findAll() {
@@ -58,7 +59,7 @@ export class LotsController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard, RolesGuard)
+  // @UseGuards(AuthGuard, RolesGuard)
   @UseInterceptors(FilesInterceptor('files'))
   update(
     @Param('id') id: string,
@@ -73,36 +74,21 @@ export class LotsController {
   remove(@Param('id') id: string) {
     return this.lotsService.remove(id);
   }
-  @Post(':lotId/apply')
+  @Patch(':lotId/apply')
   async applyToLot(
     @Param('lotId') lotId: string,
     @Body('buyerId') buyerId: string,
   ) {
     return this.lotsService.applyToLot(lotId, buyerId);
   }
-  @Delete(':lotId/remove')
-  removeFromLot(
-    @Param('lotId') lotId: string,
-    @Body('buyerId') buyerId: string,
-  ) {
-    return this.lotsService.removeFromLot(lotId, buyerId);
-  }
-  @Get(':id')
-  getLotBuyers(@Param('id') id: string) {
-    return this.lotsService.getLotBuyers(id);
-  }
-  @Get(':id')
-  getBuyerLots(@Param('id') id: string) {
-    return this.lotsService.getBuyerLots(id);
-  }
+ 
   @Patch(':id/status')
   async updateStatus(
     @Param('id') id: string,
     @Body('status') status: AuctionStatus,
   ) {
-      // service method chaqiriladi
-      const updatedLot = await this.lotsService.updateLotStatus(id, status);
-      return updatedLot;
-    
+    // service method chaqiriladi
+    const updatedLot = await this.lotsService.updateLotStatus(id, status);
+    return updatedLot;
   }
 }

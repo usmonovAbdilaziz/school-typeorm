@@ -45,10 +45,10 @@ export class PaymentsController {
     return this.paymentsService.webhook(rawBody, sig);
   }
 
-  @Get()
+  @Get(':id/buyer')
   @UseGuards(AuthGuard, BuyerGuard)
-  findAll() {
-    return this.paymentsService.findAll();
+  findAll(@Param('id') id: string) {
+    return this.paymentsService.findAll(id);
   }
   @Get(':id')
   @UseGuards(AuthGuard, BuyerGuard)

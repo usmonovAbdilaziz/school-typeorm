@@ -97,7 +97,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
-run stripe stripe listen --forward-to localhost:3001/api/v1/payments/webhook
+run stripe stripe listen --forward-to localhost:3000/api/v1/payments/webhook
 
  "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts",
    ga uzgartirilgan //"start:dev": "nest start --watch",

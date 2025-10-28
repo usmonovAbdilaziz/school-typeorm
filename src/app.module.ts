@@ -11,6 +11,8 @@ import { AucsionResaultsModule } from './aucsion_resaults/aucsion_resaults.modul
 import { CardsModule } from './cards/cards.module';
 import { AuthModule } from './auth/auth.module';
 import { BitHistoryModule } from './bit_history/bit_history.module';
+import { AuctionModule } from './modules/auction/auction.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,7 +35,7 @@ import { BitHistoryModule } from './bit_history/bit_history.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        type: 'single', // 👈 bu qo‘shimcha shart emas, lekin aniqlik kiritadi
+        type: 'single',
         url: `redis://${configService.get('REDIS_HOST')}:${configService.get('REDIS_PORT')}`,
         readyLog: true,
         closeClient: true,
@@ -48,7 +50,7 @@ import { BitHistoryModule } from './bit_history/bit_history.module';
     CardsModule,
     AuthModule,
     BitHistoryModule,
+    AuctionModule,
   ],
-  // providers: [AuctionGateway],
 })
 export class AppModule {}

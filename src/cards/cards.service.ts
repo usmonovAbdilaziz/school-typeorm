@@ -23,10 +23,10 @@ export class CardsService {
       const { buyer_id, card_number, cvc, date } = createCardDto;
 
       // Check if buyer exists
-     const buyer= await this.buyerService.findOne(buyer_id);
-     if(!buyer){
-      throw new NotFoundException('Buyer not found')
-     }
+      const buyer = await this.buyerService.findOne(buyer_id);
+      if (!buyer) {
+        throw new NotFoundException('Buyer not found');
+      }
 
       // Check if card already exists
       const existingCard = await this.cardRepo.findOne({
@@ -72,13 +72,26 @@ export class CardsService {
   async findOne(id: string) {
     try {
       const card = await this.cardRepo.findOne({
-        where: { buyer_id:id },
+        where: { buyer_id: id },
         relations: ['buyer'],
       });
       if (!card) {
         throw new NotFoundException('Card not found');
       }
       return succesMessage(card);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+  async cardsId(id: string) {
+    try {
+      const card = await this.cardRepo.findOne({
+        where: {id },
+      });
+      if (!card) {
+        throw new NotFoundException('Card not found');
+      }
+      return card
     } catch (error) {
       handleError(error);
     }

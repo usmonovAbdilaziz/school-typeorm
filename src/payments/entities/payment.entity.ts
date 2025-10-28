@@ -32,6 +32,9 @@ export class Payment {
   @Column({ type: 'integer' })
   amount: number;
 
+  @Column({ type: 'varchar',nullable:true })
+  card_id: string;
+
   @Column({ type: 'varchar' })
   providerTransactionId: string;
 

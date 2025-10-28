@@ -22,12 +22,11 @@ export class BitHistoryController {
     return this.bitHistoryService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch()
   update(
-    @Param('id') id: string,
     @Body() updateBitHistoryDto: UpdateBitHistoryDto,
   ) {
-    return this.bitHistoryService.update(id, updateBitHistoryDto);
+    return this.bitHistoryService.update(updateBitHistoryDto);
   }
 
   @Delete(':id')

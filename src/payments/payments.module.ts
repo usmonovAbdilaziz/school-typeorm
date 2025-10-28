@@ -7,6 +7,7 @@ import { BuyerModule } from '../buyer/buyer.module';
 import { StripeProvider } from '../stripe/stripe.providers';
 import { AuthModule } from '../auth/auth.module';
 import { LotsModule } from '../lots/lots.module';
+import { CardsModule } from '../cards/cards.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { LotsModule } from '../lots/lots.module';
     BuyerModule,
     LotsModule,
     AuthModule,
+    CardsModule
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService, StripeProvider],

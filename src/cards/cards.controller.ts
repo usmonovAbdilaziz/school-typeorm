@@ -35,6 +35,11 @@ export class CardsController {
   findOne(@Param('id') id: string) {
     return this.cardsService.findOne(id);
   }
+  @Get(':id')
+  // @UseGuards(AuthGuard, BuyerGuard)
+  cardsId(@Param('id') id: string) {
+    return this.cardsService.cardsId(id);
+  }
 
   @Patch(':id')
   // @UseGuards(AuthGuard, BuyerGuard)
