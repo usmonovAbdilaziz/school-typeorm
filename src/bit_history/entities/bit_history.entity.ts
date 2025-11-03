@@ -19,7 +19,7 @@ export class BidHisory {
     actionTime: Date;
   }[];
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar',nullable:true })
   lotId: string;
 
   @CreateDateColumn()
